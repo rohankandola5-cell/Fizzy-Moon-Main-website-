@@ -1,4 +1,3 @@
-
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -35,8 +34,8 @@ const BOOKING_URL = "https://www.sevenrooms.com/explore/fizzymoonbrewhouse/reser
 
 const VENUE_IMAGES = [
   {
-    // REPLACE THE LINK BELOW WITH YOUR FILENAME (e.g., "/lounge.jpg")
-    url: "/IMG_4314.jpg", 
+    // CORRECT FORMAT: Just the filename with a slash
+    url: "https://github.com/rohankandola5-cell/Fizzy-Moon/blob/main/services/IMG_4314.jpg?raw=true", 
     alt: "Warm Interior Lounge",
     label: "Warm & Welcoming"
   },
