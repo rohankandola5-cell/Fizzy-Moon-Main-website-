@@ -20,29 +20,34 @@ import { FeatureItem } from './types';
 const BOOKING_URL = "https://www.sevenrooms.com/explore/fizzymoonbrewhouse/reservations/create/search/";
 
 // ------------------------------------------------------------------
-// INSTRUCTIONS: HOSTING IMAGES ON GITHUB (THE "PUBLIC" FOLDER)
-// 1. Go to your GitHub repository in your browser.
-// 2. Create a folder named 'public' at the root (if you are using Vite/Next.js) 
-//    or simply upload images to the root directory.
-// 3. Upload your image (e.g., 'my-venue.jpg').
-// 4. Update the URL below to just the filename with a slash: '/my-venue.jpg'
+// HOW TO LINK YOUR GITHUB IMAGES (CHEAT SHEET)
+// ------------------------------------------------------------------
+// 1. DO NOT use the full "https://github.com..." link.
+// 2. DO NOT use the "https://raw.githubusercontent.com..." link.
+//
+// Because you put them in the 'public' folder, you just reference the filename.
+//
+// EXAMPLE:
+// If you uploaded "burger.jpg" to your "public" folder:
+// CHANGE: url: "https://images.unsplash..."
+// TO:     url: "/burger.jpg"
 // ------------------------------------------------------------------
 
 const VENUE_IMAGES = [
   {
-    // EXAMPLE IF ON GITHUB: url: "/lounge-interior.jpg",
-    url: "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?q=80&w=1974&auto=format&fit=crop", 
+    // REPLACE THE LINK BELOW WITH YOUR FILENAME (e.g., "/lounge.jpg")
+    url: "/IMG_4314.jpg", 
     alt: "Warm Interior Lounge",
     label: "Warm & Welcoming"
   },
   {
-    // EXAMPLE IF ON GITHUB: url: "/sunday-roast.jpg",
+    // REPLACE THE LINK BELOW WITH YOUR FILENAME (e.g., "/roast.jpg")
     url: "https://images.unsplash.com/photo-1606850780554-b55eaefa84cb?q=80&w=1974&auto=format&fit=crop",
     alt: "Sunday Roast",
     label: "Sunday Roast"
   },
   {
-    // EXAMPLE IF ON GITHUB: url: "/bar-area.jpg",
+    // REPLACE THE LINK BELOW WITH YOUR FILENAME (e.g., "/bar.jpg")
     url: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1974&auto=format&fit=crop",
     alt: "Dining Atmosphere",
     label: "Brewhouse & Grill"
@@ -51,6 +56,7 @@ const VENUE_IMAGES = [
 
 // BAND IMAGES PLACEHOLDERS
 const BAND_IMAGES = {
+  // If you uploaded "jack-price.jpg", change the link below to "/jack-price.jpg"
   jackPrice: "https://images.unsplash.com/photo-1516280440614-6697288d5d38?auto=format&fit=crop&w=800&q=80",
   innerCity: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=800&q=80",
   kingKandola: "https://images.unsplash.com/photo-1598387993441-a364f854c3e1?auto=format&fit=crop&w=800&q=80",
