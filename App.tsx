@@ -1,3 +1,4 @@
+
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -14,6 +15,7 @@ import ArtistCard from './components/ArtistCard';
 import Bubbles from './components/Bubbles';
 import FAQAccordion from './components/FAQAccordion';
 import Preloader from './components/Preloader';
+import FizzyLogo from './components/FizzyLogo';
 import { FeatureItem } from './types';
 
 const BOOKING_URL = "https://www.sevenrooms.com/explore/fizzymoonbrewhouse/reservations/create/search/";
@@ -34,22 +36,29 @@ const BOOKING_URL = "https://www.sevenrooms.com/explore/fizzymoonbrewhouse/reser
 
 const VENUE_IMAGES = [
   {
-    // CORRECT FORMAT: Just the filename with a slash
-    url: "https://github.com/rohankandola5-cell/Fizzy-Moon/blob/main/services/IMG_4314.jpg?raw=true", 
+    url: "https://github.com/rohankandola5-cell/Fizzy-Moon/blob/main/services/IMG_4315.jpg?raw=true",
+    alt: "Fizzy Moon Interior",
+    label: "Main Bar"
+  },
+  {
+    url: "https://github.com/rohankandola5-cell/Fizzy-Moon/blob/main/services/IMG_4314.jpg?raw=true",
     alt: "Warm Interior Lounge",
     label: "Warm & Welcoming"
   },
   {
-    // REPLACE THE LINK BELOW WITH YOUR FILENAME (e.g., "/roast.jpg")
-    url: "https://images.unsplash.com/photo-1606850780554-b55eaefa84cb?q=80&w=1974&auto=format&fit=crop",
-    alt: "Sunday Roast",
-    label: "Sunday Roast"
+    url: "https://github.com/rohankandola5-cell/Fizzy-Moon/blob/main/services/IMG_4316.jpg?raw=true",
+    alt: "Dining Area",
+    label: "Brewhouse & Grill"
   },
   {
-    // REPLACE THE LINK BELOW WITH YOUR FILENAME (e.g., "/bar.jpg")
-    url: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1974&auto=format&fit=crop",
-    alt: "Dining Atmosphere",
-    label: "Brewhouse & Grill"
+    url: "https://github.com/rohankandola5-cell/Fizzy-Moon/blob/main/services/IMG_4317.jpg?raw=true",
+    alt: "Garden Lounge",
+    label: "Garden Atmosphere"
+  },
+  {
+    url: "https://github.com/rohankandola5-cell/Fizzy-Moon/blob/main/services/IMG_7636_(1).jpg?raw=true",
+    alt: "Fizzy Moon Event",
+    label: "Live Events"
   }
 ];
 
@@ -315,6 +324,7 @@ const App: React.FC = () => {
   
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [assetsLoaded, setAssetsLoaded] = useState(false);
   
   // Modal States
   const [selectedFeature, setSelectedFeature] = useState<FeatureItem | null>(null);
@@ -326,6 +336,30 @@ const App: React.FC = () => {
   
   const [scrolled, setScrolled] = useState(false);
   const [currentHeroImage, setCurrentHeroImage] = useState(0);
+
+  // PRELOAD IMAGES ROBUSTLY
+  useEffect(() => {
+    const preloadImages = async () => {
+      try {
+        const promises = VENUE_IMAGES.map((img) => {
+          return new Promise((resolve, reject) => {
+            const image = new Image();
+            image.src = img.url;
+            image.onload = resolve;
+            image.onerror = resolve; // Continue even if one fails
+          });
+        });
+        
+        await Promise.all(promises);
+        setAssetsLoaded(true);
+      } catch (e) {
+        console.error("Image preload failed", e);
+        setAssetsLoaded(true); // Fail safe to open app
+      }
+    };
+    
+    preloadImages();
+  }, []);
 
   // Hero Carousel Interval
   useEffect(() => {
@@ -447,7 +481,7 @@ const App: React.FC = () => {
   return (
     <div className="relative min-h-screen text-white selection:bg-[#f78e2c] selection:text-black cursor-auto md:cursor-none overflow-x-hidden font-sans">
       <AnimatePresence>
-        {loading && <Preloader onComplete={() => setLoading(false)} />}
+        {loading && <Preloader assetsLoaded={assetsLoaded} onComplete={() => setLoading(false)} />}
       </AnimatePresence>
 
       <CustomCursor />
@@ -467,10 +501,8 @@ const App: React.FC = () => {
         <div className="flex items-center justify-between px-6 md:px-8 max-w-[1920px] mx-auto w-full">
           {/* Logo */}
           <div className="pointer-events-auto z-50">
-            <img 
-              src="https://static.wixstatic.com/media/b6f2c5_80f0668f46994301aa5a8bbf075ccbca~mv2.png/v1/fill/w_232,h_306,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/FIZZY%20MOON%20WHITE.png" 
-              alt="Fizzy Moon" 
-              className={`w-auto object-contain cursor-pointer transition-all duration-300 ${scrolled ? 'h-10 md:h-12' : 'h-12 md:h-16'}`}
+            <FizzyLogo 
+              className={`w-auto object-contain cursor-pointer transition-all duration-300 text-white ${scrolled ? 'h-10 md:h-12' : 'h-12 md:h-16'}`}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             />
           </div>
@@ -534,15 +566,15 @@ const App: React.FC = () => {
       <header className="relative h-[100svh] min-h-[600px] flex flex-col items-center justify-center overflow-hidden">
         {/* HERO IMAGE CAROUSEL BACKGROUND - High Quality Venue Photos */}
         <div className="absolute inset-0 z-0">
-          <AnimatePresence mode="popLayout">
+          <AnimatePresence>
             <motion.img 
               key={currentHeroImage}
               src={VENUE_IMAGES[currentHeroImage].url}
               alt={VENUE_IMAGES[currentHeroImage].alt}
-              initial={{ opacity: 0, scale: 1.1 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 1.5, ease: "easeInOut" }}
+              transition={{ duration: 2, ease: "easeInOut" }}
               className="absolute inset-0 w-full h-full object-cover"
             />
           </AnimatePresence>
@@ -574,25 +606,20 @@ const App: React.FC = () => {
           {/* Main Title Block */}
           <div className="relative w-full flex justify-center items-center flex-col mb-4">
              {/* FIZZY MOON - Keep branding but make it cleaner */}
-             <h1 className="text-[12vw] md:text-[10vw] leading-[0.8] font-black tracking-tighter text-center text-white drop-shadow-2xl font-heading">
-               FIZZY MOON
-             </h1>
+             <motion.img 
+               src="https://github.com/rohankandola5-cell/Fizzy-Moon/blob/main/services/fizzy_moon_white_final.png?raw=true"
+               alt="Fizzy Moon"
+               className="w-[65%] md:w-[45%] max-w-4xl h-auto object-contain drop-shadow-2xl mb-2"
+               initial={{ opacity: 0, scale: 0.95 }}
+               animate={{ opacity: 1, scale: 1 }}
+               transition={{ duration: 1, ease: "easeOut" }}
+             />
              {/* Descriptive Subtitle - Crucial for context */}
-             <h2 className="text-2xl md:text-4xl font-elegant italic text-[#f78e2c] mt-2 md:mt-4 tracking-wide">
+             <h2 className="text-2xl md:text-4xl font-elegant italic text-[#f78e2c] mt-2 tracking-wide text-center">
                Where bubbles never stop flowing
              </h2>
           </div>
           
-          <motion.p
-             initial={{ opacity: 0 }}
-             animate={{ opacity: 1 }}
-             transition={{ delay: 0.5 }}
-             className="text-gray-200 text-sm md:text-lg max-w-xl mb-8 font-light drop-shadow-md hidden md:block"
-          >
-             Home brewed ales, signature burgers, and the best Sunday Roast in Leamington. 
-             A place for family, friends, and good times.
-          </motion.p>
-
           <motion.div
              initial={{ scaleX: 0 }}
              animate={{ scaleX: 1 }}
@@ -861,7 +888,13 @@ const App: React.FC = () => {
       <footer id="contact" className="relative z-10 border-t border-white/10 py-12 md:py-16 bg-[#0b1219]/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
           <div>
-             <div className="font-heading text-3xl md:text-4xl font-bold tracking-tighter mb-4 text-white">FIZZY MOON</div>
+             <div className="mb-6">
+               <img 
+                 src="https://github.com/rohankandola5-cell/Fizzy-Moon/blob/main/services/fizzy_moon_white_final.png?raw=true" 
+                 alt="Fizzy Moon" 
+                 className="h-12 md:h-14 w-auto object-contain"
+               />
+             </div>
              <div className="flex gap-2 text-xs font-mono text-gray-400">
                <span>35 Regent St, Leamington Spa CV32 5EE</span>
              </div>

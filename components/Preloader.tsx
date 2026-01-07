@@ -1,3 +1,4 @@
+
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -8,9 +9,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface PreloaderProps {
   onComplete: () => void;
+  assetsLoaded: boolean;
 }
 
-const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
+const Preloader: React.FC<PreloaderProps> = ({ onComplete, assetsLoaded }) => {
   const [progress, setProgress] = useState(0);
   const [statusText, setStatusText] = useState("UNCORKING");
 
@@ -27,38 +29,49 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
     // Lock body scroll
     document.body.style.overflow = 'hidden';
 
-    const duration = 3000; // 3 seconds for a smooth pour
-    const start = performance.now();
+    let currentProgress = 0;
+    const incrementStep = 0.5; // Base speed per frame
 
-    const frame = (now: number) => {
-      const elapsed = now - start;
-      const rawProgress = Math.min((elapsed / duration) * 100, 100);
-      const easedProgress = (1 - Math.cos((rawProgress / 100) * Math.PI)) / 2 * 100;
-      
-      setProgress(easedProgress);
+    const frame = () => {
+      // Determine the target based on asset status
+      // If assets aren't loaded, we stall at 85%
+      // If assets ARE loaded, we aim for 100%
+      const target = assetsLoaded ? 100 : 85;
 
-      if (rawProgress < 20) setStatusText("UNCORKING");
-      else if (rawProgress < 45) setStatusText("POURING");
-      else if (rawProgress < 70) setStatusText("FIZZING");
-      else if (rawProgress < 90) setStatusText("SPARKLING");
+      // Smooth approach logic
+      if (currentProgress < target) {
+        // Slow down as we get closer to the stall point if waiting
+        const diff = target - currentProgress;
+        const speed = Math.max(0.1, Math.min(incrementStep, diff * 0.1));
+        currentProgress += speed;
+      }
+
+      // Update text based on progress
+      if (currentProgress < 20) setStatusText("UNCORKING");
+      else if (currentProgress < 45) setStatusText("POURING");
+      else if (currentProgress < 70) setStatusText("FIZZING");
+      else if (currentProgress < 90) setStatusText("SPARKLING");
       else setStatusText("CHEERS");
 
-      if (rawProgress < 100) {
-        requestAnimationFrame(frame);
-      } else {
-        // Trigger completion after animation finishes
+      setProgress(currentProgress);
+
+      if (currentProgress >= 99.5) {
+        // Complete
         setTimeout(() => {
-            onComplete();
+          onComplete();
         }, 500);
+      } else {
+        requestAnimationFrame(frame);
       }
     };
 
-    requestAnimationFrame(frame);
+    const animationId = requestAnimationFrame(frame);
 
     return () => {
+        cancelAnimationFrame(animationId);
         document.body.style.overflow = 'unset';
     };
-  }, [onComplete]);
+  }, [onComplete, assetsLoaded]);
 
   // Bubbles inside the liquid with enhanced natural physics
   const liquidBubbles = useMemo(() => {
@@ -154,7 +167,7 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
     });
   }, []);
 
-  const LOGO_URL = "https://static.wixstatic.com/media/b6f2c5_80f0668f46994301aa5a8bbf075ccbca~mv2.png/v1/fill/w_232,h_306,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/FIZZY%20MOON%20WHITE.png";
+  const LOGO_URL = "https://github.com/rohankandola5-cell/Fizzy-Moon/blob/main/services/fizzy_moon_white_final.png?raw=true";
 
   return (
     <motion.div
