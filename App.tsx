@@ -14,25 +14,10 @@ import CustomCursor from './components/CustomCursor';
 import ArtistCard from './components/ArtistCard';
 import Bubbles from './components/Bubbles';
 import FAQAccordion from './components/FAQAccordion';
-import Preloader from './components/Preloader';
 import FizzyLogo from './components/FizzyLogo';
 import { FeatureItem } from './types';
 
 const BOOKING_URL = "https://www.sevenrooms.com/explore/fizzymoonbrewhouse/reservations/create/search/";
-
-// ------------------------------------------------------------------
-// HOW TO LINK YOUR GITHUB IMAGES (CHEAT SHEET)
-// ------------------------------------------------------------------
-// 1. DO NOT use the full "https://github.com..." link.
-// 2. DO NOT use the "https://raw.githubusercontent.com..." link.
-//
-// Because you put them in the 'public' folder, you just reference the filename.
-//
-// EXAMPLE:
-// If you uploaded "burger.jpg" to your "public" folder:
-// CHANGE: url: "https://images.unsplash..."
-// TO:     url: "/burger.jpg"
-// ------------------------------------------------------------------
 
 const VENUE_IMAGES = [
   {
@@ -64,7 +49,6 @@ const VENUE_IMAGES = [
 
 // BAND IMAGES PLACEHOLDERS
 const BAND_IMAGES = {
-  // If you uploaded "jack-price.jpg", change the link below to "/jack-price.jpg"
   jackPrice: "https://images.unsplash.com/photo-1516280440614-6697288d5d38?auto=format&fit=crop&w=800&q=80",
   innerCity: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=800&q=80",
   kingKandola: "https://images.unsplash.com/photo-1598387993441-a364f854c3e1?auto=format&fit=crop&w=800&q=80",
@@ -322,9 +306,7 @@ const App: React.FC = () => {
   const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   
-  const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [assetsLoaded, setAssetsLoaded] = useState(false);
   
   // Modal States
   const [selectedFeature, setSelectedFeature] = useState<FeatureItem | null>(null);
@@ -336,30 +318,6 @@ const App: React.FC = () => {
   
   const [scrolled, setScrolled] = useState(false);
   const [currentHeroImage, setCurrentHeroImage] = useState(0);
-
-  // PRELOAD IMAGES ROBUSTLY
-  useEffect(() => {
-    const preloadImages = async () => {
-      try {
-        const promises = VENUE_IMAGES.map((img) => {
-          return new Promise((resolve, reject) => {
-            const image = new Image();
-            image.src = img.url;
-            image.onload = resolve;
-            image.onerror = resolve; // Continue even if one fails
-          });
-        });
-        
-        await Promise.all(promises);
-        setAssetsLoaded(true);
-      } catch (e) {
-        console.error("Image preload failed", e);
-        setAssetsLoaded(true); // Fail safe to open app
-      }
-    };
-    
-    preloadImages();
-  }, []);
 
   // Hero Carousel Interval
   useEffect(() => {
@@ -480,14 +438,9 @@ const App: React.FC = () => {
 
   return (
     <div className="relative min-h-screen text-white selection:bg-[#f78e2c] selection:text-black cursor-auto md:cursor-none overflow-x-hidden font-sans">
-      <AnimatePresence>
-        {loading && <Preloader assetsLoaded={assetsLoaded} onComplete={() => setLoading(false)} />}
-      </AnimatePresence>
-
       <CustomCursor />
-      {/* Remove FluidBackground from global scope to put it under hero content properly if needed, 
-          or keep it but we will overlay the hero image on top. 
-          Keeping it for other sections. */}
+      
+      {/* Optimized Background */}
       <FluidBackground />
       
       {/* Navigation - Z-50 (Highest) */}

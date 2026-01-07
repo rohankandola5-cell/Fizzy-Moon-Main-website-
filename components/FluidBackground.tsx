@@ -1,3 +1,4 @@
+
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -26,18 +27,16 @@ const StarField = () => {
       {stars.map((star) => (
         <motion.div
           key={star.id}
-          className="absolute rounded-full bg-white will-change-[opacity,transform]"
+          className="absolute rounded-full bg-white will-change-[opacity]"
           style={{
             left: `${star.x}%`,
             top: `${star.y}%`,
             width: star.size,
             height: star.size,
-            transform: 'translateZ(0)'
           }}
-          initial={{ opacity: star.opacity, scale: 1 }}
+          initial={{ opacity: star.opacity }}
           animate={{
             opacity: [star.opacity, 1, star.opacity],
-            scale: [1, 1.5, 1],
           }}
           transition={{
             duration: star.duration * 2, // Slower animation
@@ -54,52 +53,23 @@ const StarField = () => {
 const FluidBackground: React.FC = () => {
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden bg-[#0b1219]">
-      
       <StarField />
-
-      {/* Blob 1: Vibrant Orange (Fizzy) */}
-      <motion.div
-        className="absolute top-[-10%] left-[-10%] w-[90vw] h-[90vw] bg-[#f78e2c] rounded-full mix-blend-screen filter blur-[60px] opacity-15 will-change-transform"
-        animate={{
-          x: [0, 50, -25, 0],
-          y: [0, -25, 25, 0],
+      
+      {/* 
+         PERFORMANCE OPTIMIZATION: 
+         Replaced animated Framer Motion blobs (CPU heavy) with a static CSS Radial Gradient mesh (GPU optimized).
+         This creates the same "Glow" effect but without constant re-rendering.
+      */}
+      <div 
+        className="absolute inset-0 w-full h-full opacity-30 pointer-events-none"
+        style={{
+          background: `
+            radial-gradient(circle at 10% 20%, rgba(247, 142, 44, 0.4) 0%, transparent 50%),
+            radial-gradient(circle at 90% 10%, rgba(180, 83, 9, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 50% 90%, rgba(124, 45, 18, 0.4) 0%, transparent 60%)
+          `,
+          filter: 'blur(40px)', // Static blur is much cheaper than animated blur
         }}
-        transition={{
-          duration: 25,
-          repeat: Infinity,
-          ease: "linear"
-        }}
-        style={{ transform: 'translateZ(0)' }}
-      />
-
-      {/* Blob 2: Deep Amber (Beer) */}
-      <motion.div
-        className="absolute top-[20%] right-[-20%] w-[100vw] h-[80vw] bg-amber-700 rounded-full mix-blend-screen filter blur-[60px] opacity-15 will-change-transform"
-        animate={{
-          x: [0, -50, 25, 0],
-          y: [0, 50, -25, 0],
-        }}
-        transition={{
-          duration: 30,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        style={{ transform: 'translateZ(0)' }}
-      />
-
-      {/* Blob 3: Dark Red/Orange (Moon) */}
-      <motion.div
-        className="absolute bottom-[-20%] left-[20%] w-[80vw] h-[80vw] bg-red-900 rounded-full mix-blend-screen filter blur-[60px] opacity-20 will-change-transform"
-        animate={{
-          x: [0, 75, -75, 0],
-          y: [0, -50, 50, 0],
-        }}
-        transition={{
-          duration: 35,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        style={{ transform: 'translateZ(0)' }}
       />
 
       {/* Static Grain Overlay */}

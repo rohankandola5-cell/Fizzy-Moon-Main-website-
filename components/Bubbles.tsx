@@ -1,3 +1,4 @@
+
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -11,16 +12,14 @@ const Bubbles: React.FC = () => {
 
   useEffect(() => {
     // Champagne/Beer tones: Gold, Amber, White
-    // Prioritize small, sharp, bright highlights for that "fizzy" look
     const bubbleColors = [
       'bg-white/60 shadow-[0_0_4px_rgba(255,255,255,0.8)]', // Bright white sparkle
       'bg-[#fbbf24]/40 shadow-[0_0_6px_rgba(251,191,36,0.6)]', // Rich Amber
       'bg-[#fcd34d]/30 shadow-[0_0_5px_rgba(253,211,77,0.5)]', // Pale Gold
     ];
 
-    const generatedBubbles = Array.from({ length: 120 }).map((_, i) => {
-      // Carbonation physics: 
-      // Champagne/Beer bubbles are typically small and uniform, with some variance.
+    // PERFORMANCE: Reduced bubble count from 120 to 30.
+    const generatedBubbles = Array.from({ length: 30 }).map((_, i) => {
       const isSmall = Math.random() > 0.15;
       const size = isSmall ? Math.random() * 3 + 1 : Math.random() * 6 + 4; // Mostly 1-4px
       
