@@ -1,0 +1,273 @@
+[
+  {
+    "month": "January",
+    "events": [
+      {
+        "date": "Fri 2nd",
+        "act": "Jack Price",
+        "image": "/images/bands/jack-price/photo.jpg",
+        "genre": "Acoustic / Indie",
+        "time": "9:00 PM",
+        "description": "Jack Price brings a soulful energy to the stage, blending classic indie anthems with a modern acoustic twist. A local favorite known for his raw vocals and captivating stage presence that gets the whole room singing along."
+      },
+      {
+        "date": "Sat 3rd",
+        "act": "Inner City 3",
+        "image": "/images/bands/inner-city-3/photo.jpg",
+        "genre": "House / Dance Classics",
+        "time": "9:30 PM",
+        "highlight": true,
+        "description": "Get ready for a high-octane journey through the history of dance music. Inner City 3 delivers punchy covers of the biggest house and electronic tracks from the 90s to today. Bring your dancing shoes."
+      },
+      {
+        "date": "Fri 9th",
+        "act": "King Kandola",
+        "image": "/images/bands/king-kandola/photo.jpg",
+        "genre": "Rock / Pop",
+        "time": "9:00 PM",
+        "highlight": true,
+        "description": "A powerhouse front-man with a voice that commands attention. King Kandola fuses rock swagger with pop sensibilities, delivering a setlist that ranges from Queen to The Killers."
+      },
+      {
+        "date": "Sat 10th",
+        "act": "Tovey Brothers",
+        "image": "/images/bands/tovey-brothers/photo.jpg",
+        "genre": "Classic Rock & Soul",
+        "time": "9:30 PM",
+        "highlight": true,
+        "description": "The Tovey Brothers are a musical institution. Expect tight harmonies, virtuoso guitar work, and a setlist packed with timeless classics from the 60s, 70s, and 80s."
+      },
+      {
+        "date": "Fri 16th",
+        "act": "Jack Price",
+        "image": "/images/bands/jack-price/photo.jpg",
+        "genre": "Acoustic / Indie",
+        "time": "9:00 PM",
+        "description": "Jack Price returns for another intimate yet energetic Friday night session. Perfect for starting your weekend with great vibes and cold drinks."
+      },
+      {
+        "date": "Sat 17th",
+        "act": "Tiago & The Amigo's",
+        "image": "/images/bands/tiago-and-the-amigos/photo.jpg",
+        "genre": "Latin / Funk / Pop",
+        "time": "9:30 PM",
+        "highlight": true,
+        "description": "A fusion of infectious Latin rhythms, funk grooves, and pop hits. Tiago & The Amigos bring a carnival atmosphere to Fizzy Moon that is impossible to resist."
+      },
+      {
+        "date": "Fri 23rd",
+        "act": "Jack Price",
+        "image": "/images/bands/jack-price/photo.jpg",
+        "genre": "Acoustic / Indie",
+        "time": "9:00 PM",
+        "description": "Our resident Friday night maestro. Jack digs deep into his repertoire to bring you B-sides and fan favorites alongside the hits."
+      },
+      {
+        "date": "Sat 24th",
+        "act": "The MockingJay's",
+        "image": "/images/bands/the-mockingjays/photo.jpg",
+        "genre": "Modern Rock / Alt-Pop",
+        "time": "9:30 PM",
+        "highlight": true,
+        "description": "Sharp, stylish, and incredibly tight. The MockingJays tear through modern rock and alt-pop bangers with an energy that fills the floor."
+      },
+      {
+        "date": "Fri 30th",
+        "act": "DJ ROSS",
+        "image": "/images/bands/dj-ross/photo.jpg",
+        "genre": "Open Format DJ",
+        "time": "8:00 PM - Late",
+        "special": true,
+        "description": "Leamington's finest selector takes over the decks. From disco edits to R&B throwbacks and house anthems, DJ Ross knows exactly how to read the room."
+      },
+      {
+        "date": "Sat 31st",
+        "act": "CARL SINCLAIR",
+        "image": "/images/bands/carl-sinclair/photo.jpg",
+        "genre": "Piano / Vocals",
+        "time": "9:00 PM",
+        "special": true,
+        "description": "The Piano Man himself. Carl Sinclair brings his legendary boogie-woogie piano style and soulful voice for a night of rock n roll and rhythm & blues."
+      }
+    ]
+  },
+  {
+    "month": "February",
+    "events": [
+      {
+        "date": "Fri 6th",
+        "act": "Jack Price",
+        "image": "/images/bands/jack-price/photo.jpg",
+        "genre": "Acoustic / Indie",
+        "time": "9:00 PM",
+        "description": "Warm up your February Friday with Jack Price. The perfect soundtrack to our craft ales and signature cocktails."
+      },
+      {
+        "date": "Sat 7th",
+        "act": "Cover Buoys",
+        "image": "/images/bands/cover-buoys/photo.jpg",
+        "genre": "Party Band",
+        "time": "9:30 PM",
+        "highlight": true,
+        "description": "Fun, frantic, and fantastic. The Cover Buoys don't take themselves too seriously, but they take the music very seriously. Expect surprise mashups and singalongs."
+      },
+      {
+        "date": "Fri 13th",
+        "act": "King Kandola",
+        "image": "/images/bands/king-kandola/photo.jpg",
+        "genre": "Rock / Pop",
+        "time": "9:00 PM",
+        "highlight": true,
+        "description": "King Kandola is back to rock the house. A high-energy performance guaranteed to shake off the winter blues."
+      },
+      {
+        "date": "Sat 14th",
+        "act": "QUEST TRIO",
+        "image": "/images/bands/quest-trio/photo.jpg",
+        "genre": "Jazz / Soul / Pop",
+        "time": "9:30 PM",
+        "special": true,
+        "description": "A special Valentine's performance. Smooth jazz standards, soulful ballads, and romantic pop arrangements from this talented trio."
+      },
+      {
+        "date": "Fri 20th",
+        "act": "DJ ROSS",
+        "image": "/images/bands/dj-ross/photo.jpg",
+        "genre": "Open Format DJ",
+        "time": "8:00 PM - Late",
+        "special": true,
+        "description": "Friday Night Fever with DJ Ross. Spinning the tracks that make you move, from old school classics to fresh cuts."
+      },
+      {
+        "date": "Sat 21st",
+        "act": "Back Catalogue",
+        "image": "/images/bands/back-catalogue/photo.jpg",
+        "genre": "Decades / Pop",
+        "time": "9:30 PM",
+        "highlight": true,
+        "description": "A musical journey through the decades. Back Catalogue picks the very best tracks from the 70s, 80s, 90s, and 00s for a nostalgia-filled party."
+      }
+    ]
+  },
+  {
+    "month": "March",
+    "events": [
+      {
+        "date": "Fri 6th",
+        "act": "Jack Price",
+        "image": "/images/bands/jack-price/photo.jpg",
+        "genre": "Acoustic",
+        "time": "9:00 PM",
+        "description": "Acoustic vibes in the main bar."
+      },
+      {
+        "date": "Sat 7th",
+        "act": "Chasing Deer",
+        "image": "/images/bands/chasing-deer/photo.jpg",
+        "genre": "Indie Pop",
+        "time": "9:30 PM",
+        "highlight": true,
+        "description": "Energetic indie pop band hailing from London. Catchy choruses and great vibes."
+      },
+      {
+        "date": "Fri 13th",
+        "act": "King Kandola",
+        "image": "/images/bands/king-kandola/photo.jpg",
+        "genre": "Rock",
+        "time": "9:00 PM",
+        "highlight": true,
+        "description": "The King returns to rock the main stage."
+      },
+      {
+        "date": "Sat 14th",
+        "act": "Tiago & The Amigo's",
+        "image": "/images/bands/tiago-and-the-amigos/photo.jpg",
+        "genre": "Latin",
+        "time": "9:30 PM",
+        "highlight": true,
+        "description": "Latin fever takes over Fizzy Moon."
+      },
+      {
+        "date": "Sun 15th",
+        "act": "COLE",
+        "image": "/images/bands/cole/photo.jpg",
+        "genre": "Soul / Swing",
+        "time": "2:00 PM",
+        "note": "MOTHERS DAY !!!",
+        "special": true,
+        "description": "A relaxed afternoon set for Mother's Day, featuring smooth soul and swing classics."
+      },
+      {
+        "date": "Fri 20th",
+        "act": "DJ ROSS",
+        "image": "/images/bands/dj-ross/photo.jpg",
+        "genre": "DJ Set",
+        "time": "8:00 PM",
+        "special": true,
+        "description": "Friday beats until late."
+      },
+      {
+        "date": "Sat 21st",
+        "act": "Viva La Diva (Josie)",
+        "image": "/images/bands/viva-la-diva-josie/photo.jpg",
+        "genre": "Pop Divas",
+        "time": "9:30 PM",
+        "highlight": true,
+        "description": "A tribute to the greatest divas of pop, from Whitney to Beyoncé."
+      }
+    ]
+  },
+  {
+    "month": "April",
+    "events": [
+      {
+        "date": "Fri 3rd",
+        "act": "Jack Price",
+        "image": "/images/bands/jack-price/photo.jpg",
+        "genre": "Acoustic",
+        "time": "9:00 PM",
+        "note": "GOOD FRIDAY",
+        "special": true,
+        "description": "Good Friday special."
+      },
+      {
+        "date": "Sat 4th",
+        "act": "IZZY OWEN TRIO",
+        "image": "/images/bands/izzy-owen-trio/photo.jpg",
+        "genre": "Contemporary Pop",
+        "time": "9:30 PM",
+        "special": true,
+        "description": "Fresh arrangements of contemporary hits featuring stunning vocals."
+      },
+      {
+        "date": "Sun 5th",
+        "act": "Thom Kirkpatrick",
+        "image": "/images/bands/thom-kirkpatrick/photo.jpg",
+        "genre": "One Man Band",
+        "time": "8:00 PM",
+        "note": "EASTER SUNDAY",
+        "special": true,
+        "description": "An incredible one-man-band loop pedal experience. You have to see it to believe it."
+      },
+      {
+        "date": "Fri 10th",
+        "act": "King Kandola",
+        "image": "/images/bands/king-kandola/photo.jpg",
+        "genre": "Rock",
+        "time": "9:00 PM",
+        "special": true,
+        "description": "Rock n Roll Friday."
+      },
+      {
+        "date": "Sat 11th",
+        "act": "Andy Flynn Trio",
+        "image": "/images/bands/andy-flynn-trio/photo.jpg",
+        "genre": "Irish / Folk",
+        "time": "9:30 PM",
+        "highlight": true,
+        "description": "Foot-stomping folk and Irish classics to get the party started."
+      }
+    ]
+  }
+]
+

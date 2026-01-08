@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
 */
 
+'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
@@ -15,7 +16,10 @@ import ArtistCard from './components/ArtistCard';
 import Bubbles from './components/Bubbles';
 import FAQAccordion from './components/FAQAccordion';
 import FizzyLogo from './components/FizzyLogo';
+import PromoModal from './components/PromoModal';
 import { FeatureItem } from './types';
+import { PROMO_CONFIG } from './promoConfig';
+import MUSIC_SCHEDULE from './data/music-schedule.json';
 
 const BOOKING_URL = "https://www.sevenrooms.com/explore/fizzymoonbrewhouse/reservations/create/search/";
 
@@ -49,204 +53,8 @@ const VENUE_IMAGES = [
   }
 ];
 
-// Band images - place images in /public/images/bands/ folder
-// You can replace these with actual band photos when available
-// For now, keeping Unsplash as fallback - replace with local paths when you have the images
-const BAND_IMAGES = {
-  jackPrice: "/images/bands/jack-price.jpg", // Replace with actual image
-  innerCity: "/images/bands/inner-city.jpg", // Replace with actual image
-  kingKandola: "/images/bands/king-kandola.jpg", // Replace with actual image
-  tovey: "/images/bands/tovey.jpg", // Replace with actual image
-  tiago: "/images/bands/tiago.jpg", // Replace with actual image
-  mockingJays: "/images/bands/mocking-jays.jpg", // Replace with actual image
-  djRoss: "/images/bands/dj-ross.jpg", // Replace with actual image
-  carl: "/images/bands/carl.jpg", // Replace with actual image
-  coverBuoys: "/images/bands/cover-buoys.jpg", // Replace with actual image
-  quest: "/images/bands/quest.jpg", // Replace with actual image
-  backCat: "/images/bands/back-catalogue.jpg", // Replace with actual image
-  chasingDeer: "/images/bands/chasing-deer.jpg", // Replace with actual image
-  cole: "/images/bands/cole.jpg", // Replace with actual image
-  viva: "/images/bands/viva.jpg", // Replace with actual image
-  izzy: "/images/bands/izzy.jpg", // Replace with actual image
-  thom: "/images/bands/thom.jpg", // Replace with actual image
-  andy: "/images/bands/andy.jpg", // Replace with actual image
-};
-
-// MUSIC SCHEDULE DATA 2026 WITH DESCRIPTIONS
-const MUSIC_SCHEDULE = [
-  {
-    month: 'January',
-    events: [
-      { 
-        date: 'Fri 2nd', 
-        act: 'Jack Price', 
-        image: BAND_IMAGES.jackPrice,
-        genre: 'Acoustic / Indie',
-        time: '9:00 PM',
-        description: 'Jack Price brings a soulful energy to the stage, blending classic indie anthems with a modern acoustic twist. A local favorite known for his raw vocals and captivating stage presence that gets the whole room singing along.'
-      },
-      { 
-        date: 'Sat 3rd', 
-        act: 'Inner City 3', 
-        highlight: true, 
-        image: BAND_IMAGES.innerCity,
-        genre: 'House / Dance Classics',
-        time: '9:30 PM',
-        description: 'Get ready for a high-octane journey through the history of dance music. Inner City 3 delivers punchy covers of the biggest house and electronic tracks from the 90s to today. Bring your dancing shoes.'
-      },
-      { 
-        date: 'Fri 9th', 
-        act: 'King Kandola', 
-        highlight: true, 
-        image: BAND_IMAGES.kingKandola,
-        genre: 'Rock / Pop',
-        time: '9:00 PM',
-        description: 'A powerhouse front-man with a voice that commands attention. King Kandola fuses rock swagger with pop sensibilities, delivering a setlist that ranges from Queen to The Killers.'
-      },
-      { 
-        date: 'Sat 10th', 
-        act: 'Tovey Brothers', 
-        highlight: true, 
-        image: BAND_IMAGES.tovey,
-        genre: 'Classic Rock & Soul',
-        time: '9:30 PM',
-        description: 'The Tovey Brothers are a musical institution. Expect tight harmonies, virtuoso guitar work, and a setlist packed with timeless classics from the 60s, 70s, and 80s.'
-      },
-      { 
-        date: 'Fri 16th', 
-        act: 'Jack Price', 
-        image: BAND_IMAGES.jackPrice,
-        genre: 'Acoustic / Indie',
-        time: '9:00 PM',
-        description: 'Jack Price returns for another intimate yet energetic Friday night session. Perfect for starting your weekend with great vibes and cold drinks.'
-      },
-      { 
-        date: 'Sat 17th', 
-        act: "Tiago & The Amigo's", 
-        highlight: true, 
-        image: BAND_IMAGES.tiago,
-        genre: 'Latin / Funk / Pop',
-        time: '9:30 PM',
-        description: 'A fusion of infectious Latin rhythms, funk grooves, and pop hits. Tiago & The Amigos bring a carnival atmosphere to Fizzy Moon that is impossible to resist.'
-      },
-      { 
-        date: 'Fri 23rd', 
-        act: 'Jack Price', 
-        image: BAND_IMAGES.jackPrice,
-        genre: 'Acoustic / Indie',
-        time: '9:00 PM',
-        description: 'Our resident Friday night maestro. Jack digs deep into his repertoire to bring you B-sides and fan favorites alongside the hits.'
-      },
-      { 
-        date: 'Sat 24th', 
-        act: "The MockingJay's", 
-        highlight: true, 
-        image: BAND_IMAGES.mockingJays,
-        genre: 'Modern Rock / Alt-Pop',
-        time: '9:30 PM',
-        description: 'Sharp, stylish, and incredibly tight. The MockingJays tear through modern rock and alt-pop bangers with an energy that fills the floor.'
-      },
-      { 
-        date: 'Fri 30th', 
-        act: 'DJ ROSS', 
-        special: true, 
-        image: BAND_IMAGES.djRoss,
-        genre: 'Open Format DJ',
-        time: '8:00 PM - Late',
-        description: 'Leamington’s finest selector takes over the decks. From disco edits to R&B throwbacks and house anthems, DJ Ross knows exactly how to read the room.'
-      },
-      { 
-        date: 'Sat 31st', 
-        act: 'CARL SINCLAIR', 
-        special: true, 
-        image: BAND_IMAGES.carl,
-        genre: 'Piano / Vocals',
-        time: '9:00 PM',
-        description: 'The Piano Man himself. Carl Sinclair brings his legendary boogie-woogie piano style and soulful voice for a night of rock n roll and rhythm & blues.'
-      },
-    ]
-  },
-  {
-    month: 'February',
-    events: [
-      { 
-        date: 'Fri 6th', 
-        act: 'Jack Price', 
-        image: BAND_IMAGES.jackPrice,
-        genre: 'Acoustic / Indie',
-        time: '9:00 PM',
-        description: 'Warm up your February Friday with Jack Price. The perfect soundtrack to our craft ales and signature cocktails.'
-      },
-      { 
-        date: 'Sat 7th', 
-        act: 'Cover Buoys', 
-        highlight: true, 
-        image: BAND_IMAGES.coverBuoys,
-        genre: 'Party Band',
-        time: '9:30 PM',
-        description: 'Fun, frantic, and fantastic. The Cover Buoys don’t take themselves too seriously, but they take the music very seriously. Expect surprise mashups and singalongs.'
-      },
-      { 
-        date: 'Fri 13th', 
-        act: 'King Kandola', 
-        highlight: true, 
-        image: BAND_IMAGES.kingKandola,
-        genre: 'Rock / Pop',
-        time: '9:00 PM',
-        description: 'King Kandola is back to rock the house. A high-energy performance guaranteed to shake off the winter blues.'
-      },
-      { 
-        date: 'Sat 14th', 
-        act: 'QUEST TRIO', 
-        special: true, 
-        image: BAND_IMAGES.quest,
-        genre: 'Jazz / Soul / Pop',
-        time: '9:30 PM',
-        description: 'A special Valentine’s performance. Smooth jazz standards, soulful ballads, and romantic pop arrangements from this talented trio.'
-      },
-      { 
-        date: 'Fri 20th', 
-        act: 'DJ ROSS', 
-        special: true, 
-        image: BAND_IMAGES.djRoss,
-        genre: 'Open Format DJ',
-        time: '8:00 PM - Late',
-        description: 'Friday Night Fever with DJ Ross. Spinning the tracks that make you move, from old school classics to fresh cuts.'
-      },
-      { 
-        date: 'Sat 21st', 
-        act: 'Back Catalogue', 
-        highlight: true, 
-        image: BAND_IMAGES.backCat,
-        genre: 'Decades / Pop',
-        time: '9:30 PM',
-        description: 'A musical journey through the decades. Back Catalogue picks the very best tracks from the 70s, 80s, 90s, and 00s for a nostalgia-filled party.'
-      },
-    ]
-  },
-  {
-    month: 'March',
-    events: [
-      { date: 'Fri 6th', act: 'Jack Price', image: BAND_IMAGES.jackPrice, genre: 'Acoustic', time: '9:00 PM', description: 'Acoustic vibes in the main bar.' },
-      { date: 'Sat 7th', act: 'Chasing Deer', highlight: true, image: BAND_IMAGES.chasingDeer, genre: 'Indie Pop', time: '9:30 PM', description: 'Energetic indie pop band hailing from London. Catchy choruses and great vibes.' },
-      { date: 'Fri 13th', act: 'King Kandola', highlight: true, image: BAND_IMAGES.kingKandola, genre: 'Rock', time: '9:00 PM', description: 'The King returns to rock the main stage.' },
-      { date: 'Sat 14th', act: "Tiago & The Amigo's", highlight: true, image: BAND_IMAGES.tiago, genre: 'Latin', time: '9:30 PM', description: 'Latin fever takes over Fizzy Moon.' },
-      { date: 'Sun 15th', act: 'COLE', note: 'MOTHERS DAY !!!', special: true, image: BAND_IMAGES.cole, genre: 'Soul / Swing', time: '2:00 PM', description: 'A relaxed afternoon set for Mother’s Day, featuring smooth soul and swing classics.' },
-      { date: 'Fri 20th', act: 'DJ ROSS', special: true, image: BAND_IMAGES.djRoss, genre: 'DJ Set', time: '8:00 PM', description: 'Friday beats until late.' },
-      { date: 'Sat 21st', act: 'Viva La Diva (Josie)', highlight: true, image: BAND_IMAGES.viva, genre: 'Pop Divas', time: '9:30 PM', description: 'A tribute to the greatest divas of pop, from Whitney to Beyoncé.' },
-    ]
-  },
-  {
-    month: 'April',
-    events: [
-      { date: 'Fri 3rd', act: 'Jack Price', note: 'GOOD FRIDAY', special: true, image: BAND_IMAGES.jackPrice, genre: 'Acoustic', time: '9:00 PM', description: 'Good Friday special.' },
-      { date: 'Sat 4th', act: 'IZZY OWEN TRIO', special: true, image: BAND_IMAGES.izzy, genre: 'Contemporary Pop', time: '9:30 PM', description: 'Fresh arrangements of contemporary hits featuring stunning vocals.' },
-      { date: 'Sun 5th', act: 'Thom Kirkpatrick', note: 'EASTER SUNDAY', special: true, image: BAND_IMAGES.thom, genre: 'One Man Band', time: '8:00 PM', description: 'An incredible one-man-band loop pedal experience. You have to see it to believe it.' },
-      { date: 'Fri 10th', act: 'King Kandola', special: true, image: BAND_IMAGES.kingKandola, genre: 'Rock', time: '9:00 PM', description: 'Rock n Roll Friday.' },
-      { date: 'Sat 11th', act: 'Andy Flynn Trio', highlight: true, image: BAND_IMAGES.andy, genre: 'Irish / Folk', time: '9:30 PM', description: 'Foot-stomping folk and Irish classics to get the party started.' },
-    ]
-  }
-];
+// Live music schedule data is now loaded from data/music-schedule.json
+// Edit that file to update events, artists, and descriptions
 
 // DATA SEPARATION
 const EVENTS: FeatureItem[] = [
@@ -475,6 +283,9 @@ const App: React.FC = () => {
     <div className="relative min-h-screen text-white selection:bg-[#f78e2c] selection:text-black cursor-auto md:cursor-none overflow-x-hidden font-sans">
       <CustomCursor />
       
+      {/* Promotional Modal */}
+      <PromoModal config={PROMO_CONFIG} />
+      
       {/* Optimized Background */}
       <FluidBackground />
       
@@ -529,22 +340,6 @@ const App: React.FC = () => {
             >
               <Calendar className="w-3.5 h-3.5" />
               <span>BOOK</span>
-            </button>
-
-            {/* Mobile Menu Toggle - Enhanced Interaction */}
-            <button 
-              className={`flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full border transition-all duration-300 shadow-lg cursor-pointer ${scrolled ? 'bg-white/10 border-white/20' : 'bg-white/10 backdrop-blur-md border-white/20'} pointer-events-auto active:scale-90`}
-              onClick={(e) => {
-                e.stopPropagation();
-                setMobileMenuOpen(prev => !prev);
-              }}
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? (
-                <X className="w-5 h-5 pointer-events-none" />
-              ) : (
-                <Menu className="w-5 h-5 pointer-events-none" />
-              )}
             </button>
           </div>
         </div>
@@ -755,7 +550,7 @@ const App: React.FC = () => {
                 >
                   <div className="flex-1">
                     <div className="flex justify-between items-start mb-2">
-                       <h3 className="text-2xl md:text-3xl font-heading font-bold text-white leading-none">{ticket.name}</h3>
+                       <h3 className="text-2xl md:text-3xl font-booking-header font-bold text-white leading-none uppercase">{ticket.name}</h3>
                        {ticket.color === 'gold' && <Crown className="text-[#f78e2c] w-6 h-6 animate-pulse" />}
                     </div>
                     <p className={`text-sm font-bold uppercase tracking-widest mb-6 ${ticket.color === 'gold' ? 'text-[#f78e2c]' : ticket.color === 'pink' ? 'text-red-500' : ticket.color === 'purple' ? 'text-purple-500' : 'text-cyan-500'}`}>
@@ -1034,14 +829,10 @@ const App: React.FC = () => {
                                     {selectedEvent.description || "Join us for an unforgettable night of live music, great drinks, and amazing atmosphere."}
                                 </p>
                                 
-                                <div className="grid grid-cols-2 gap-4 mb-8">
-                                    <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+                                <div className="mb-8">
+                                    <div className="bg-white/5 p-4 rounded-xl border border-white/10 inline-block">
                                         <div className="text-xs text-gray-500 uppercase tracking-widest mb-1">Time</div>
                                         <div className="text-white font-bold">{selectedEvent.time}</div>
-                                    </div>
-                                    <div className="bg-white/5 p-4 rounded-xl border border-white/10">
-                                        <div className="text-xs text-gray-500 uppercase tracking-widest mb-1">Entry</div>
-                                        <div className="text-white font-bold">Free Entry</div>
                                     </div>
                                 </div>
 
