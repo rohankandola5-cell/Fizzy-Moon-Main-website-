@@ -21,10 +21,12 @@ export default function FizzyLogo({
   
   return (
     <img 
-      src="https://github.com/rohankandola5-cell/Fizzy-Moon/blob/main/services/fizzy_moon_white_final.png?raw=true" 
+      src="/images/logo/fizzy_moon_white_final.png" 
       alt="Fizzy Moon Logo"
       className={className}
       onClick={onClick}
+      loading="eager"
+      decoding="async"
     />
   );
 }

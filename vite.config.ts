@@ -18,6 +18,10 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
+      },
+      build: {
+        // Optimize images during build
+        assetsInlineLimit: 4096, // Inline small images as base64
       }
     };
 });

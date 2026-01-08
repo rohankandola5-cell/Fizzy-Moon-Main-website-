@@ -19,53 +19,57 @@ import { FeatureItem } from './types';
 
 const BOOKING_URL = "https://www.sevenrooms.com/explore/fizzymoonbrewhouse/reservations/create/search/";
 
+// Local venue images - place images in /public/images/venue/ folder
+// Vite will automatically optimize these during build
 const VENUE_IMAGES = [
   {
-    url: "https://github.com/rohankandola5-cell/Fizzy-Moon/blob/main/services/IMG_4315.jpg?raw=true",
+    url: "/images/venue/IMG_4315.jpg",
     alt: "Fizzy Moon Interior",
     label: "Main Bar"
   },
   {
-    url: "https://github.com/rohankandola5-cell/Fizzy-Moon/blob/main/services/IMG_4314.jpg?raw=true",
+    url: "/images/venue/IMG_4314.jpg",
     alt: "Warm Interior Lounge",
     label: "Warm & Welcoming"
   },
   {
-    url: "https://github.com/rohankandola5-cell/Fizzy-Moon/blob/main/services/IMG_4316.jpg?raw=true",
+    url: "/images/venue/IMG_4316.jpg",
     alt: "Dining Area",
     label: "Brewhouse & Grill"
   },
   {
-    url: "https://github.com/rohankandola5-cell/Fizzy-Moon/blob/main/services/IMG_4317.jpg?raw=true",
+    url: "/images/venue/IMG_4317.jpg",
     alt: "Garden Lounge",
     label: "Garden Atmosphere"
   },
   {
-    url: "https://github.com/rohankandola5-cell/Fizzy-Moon/blob/main/services/IMG_7636_(1).jpg?raw=true",
+    url: "/images/venue/IMG_7636_(1).jpg",
     alt: "Fizzy Moon Event",
     label: "Live Events"
   }
 ];
 
-// BAND IMAGES PLACEHOLDERS
+// Band images - place images in /public/images/bands/ folder
+// You can replace these with actual band photos when available
+// For now, keeping Unsplash as fallback - replace with local paths when you have the images
 const BAND_IMAGES = {
-  jackPrice: "https://images.unsplash.com/photo-1516280440614-6697288d5d38?auto=format&fit=crop&w=800&q=80",
-  innerCity: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=800&q=80",
-  kingKandola: "https://images.unsplash.com/photo-1598387993441-a364f854c3e1?auto=format&fit=crop&w=800&q=80",
-  tovey: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
-  tiago: "https://images.unsplash.com/photo-1533174072545-e8d4aa97edf9?auto=format&fit=crop&w=800&q=80",
-  mockingJays: "https://images.unsplash.com/photo-1493225255756-d9584f8606e9?auto=format&fit=crop&w=800&q=80",
-  djRoss: "https://images.unsplash.com/photo-1571266028243-3716f02d2d2e?auto=format&fit=crop&w=800&q=80",
-  carl: "https://images.unsplash.com/photo-1514525253440-b393452e8d26?auto=format&fit=crop&w=800&q=80",
-  coverBuoys: "https://images.unsplash.com/photo-1459749411177-d4a414c9ff5f?auto=format&fit=crop&w=800&q=80",
-  quest: "https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?auto=format&fit=crop&w=800&q=80",
-  backCat: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=800&q=80",
-  chasingDeer: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=800&q=80",
-  cole: "https://images.unsplash.com/photo-1485579149621-3123dd979885?auto=format&fit=crop&w=800&q=80",
-  viva: "https://images.unsplash.com/photo-1604093882750-3ed498f3178b?auto=format&fit=crop&w=800&q=80",
-  izzy: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=800&q=80",
-  thom: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=800&q=80",
-  andy: "https://images.unsplash.com/photo-1525994886773-080587e161c2?auto=format&fit=crop&w=800&q=80",
+  jackPrice: "/images/bands/jack-price.jpg", // Replace with actual image
+  innerCity: "/images/bands/inner-city.jpg", // Replace with actual image
+  kingKandola: "/images/bands/king-kandola.jpg", // Replace with actual image
+  tovey: "/images/bands/tovey.jpg", // Replace with actual image
+  tiago: "/images/bands/tiago.jpg", // Replace with actual image
+  mockingJays: "/images/bands/mocking-jays.jpg", // Replace with actual image
+  djRoss: "/images/bands/dj-ross.jpg", // Replace with actual image
+  carl: "/images/bands/carl.jpg", // Replace with actual image
+  coverBuoys: "/images/bands/cover-buoys.jpg", // Replace with actual image
+  quest: "/images/bands/quest.jpg", // Replace with actual image
+  backCat: "/images/bands/back-catalogue.jpg", // Replace with actual image
+  chasingDeer: "/images/bands/chasing-deer.jpg", // Replace with actual image
+  cole: "/images/bands/cole.jpg", // Replace with actual image
+  viva: "/images/bands/viva.jpg", // Replace with actual image
+  izzy: "/images/bands/izzy.jpg", // Replace with actual image
+  thom: "/images/bands/thom.jpg", // Replace with actual image
+  andy: "/images/bands/andy.jpg", // Replace with actual image
 };
 
 // MUSIC SCHEDULE DATA 2026 WITH DESCRIPTIONS
@@ -319,6 +323,37 @@ const App: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [currentHeroImage, setCurrentHeroImage] = useState(0);
 
+  // Preload critical images for better performance
+  useEffect(() => {
+    // Preload first hero image (most important)
+    const preloadHero = document.createElement('link');
+    preloadHero.rel = 'preload';
+    preloadHero.as = 'image';
+    preloadHero.href = VENUE_IMAGES[0].url;
+    preloadHero.fetchPriority = 'high';
+    document.head.appendChild(preloadHero);
+
+    // Preload logo
+    const preloadLogo = document.createElement('link');
+    preloadLogo.rel = 'preload';
+    preloadLogo.as = 'image';
+    preloadLogo.href = '/images/logo/fizzy_moon_white_final.png';
+    document.head.appendChild(preloadLogo);
+
+    // Preload next hero image in background
+    const preloadNext = document.createElement('link');
+    preloadNext.rel = 'prefetch';
+    preloadNext.as = 'image';
+    preloadNext.href = VENUE_IMAGES[1].url;
+    document.head.appendChild(preloadNext);
+
+    return () => {
+      document.head.removeChild(preloadHero);
+      document.head.removeChild(preloadLogo);
+      document.head.removeChild(preloadNext);
+    };
+  }, []);
+
   // Hero Carousel Interval
   useEffect(() => {
     const interval = setInterval(() => {
@@ -529,6 +564,9 @@ const App: React.FC = () => {
               exit={{ opacity: 0 }}
               transition={{ duration: 2, ease: "easeInOut" }}
               className="absolute inset-0 w-full h-full object-cover"
+              loading={currentHeroImage === 0 ? "eager" : "lazy"}
+              decoding="async"
+              fetchPriority={currentHeroImage === 0 ? "high" : "auto"}
             />
           </AnimatePresence>
           {/* Dark Overlay for Text Readability - Balanced to show the venue warmth */}
@@ -560,7 +598,7 @@ const App: React.FC = () => {
           <div className="relative w-full flex justify-center items-center flex-col mb-4">
              {/* FIZZY MOON - Keep branding but make it cleaner */}
              <motion.img 
-               src="https://github.com/rohankandola5-cell/Fizzy-Moon/blob/main/services/fizzy_moon_white_final.png?raw=true"
+               src="/images/logo/fizzy_moon_white_final.png"
                alt="Fizzy Moon"
                className="w-[65%] md:w-[45%] max-w-4xl h-auto object-contain drop-shadow-2xl mb-2"
                initial={{ opacity: 0, scale: 0.95 }}
@@ -843,7 +881,7 @@ const App: React.FC = () => {
           <div>
              <div className="mb-6">
                <img 
-                 src="https://github.com/rohankandola5-cell/Fizzy-Moon/blob/main/services/fizzy_moon_white_final.png?raw=true" 
+                 src="/images/logo/fizzy_moon_white_final.png" 
                  alt="Fizzy Moon" 
                  className="h-12 md:h-14 w-auto object-contain"
                />

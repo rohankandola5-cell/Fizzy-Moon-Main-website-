@@ -167,7 +167,7 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete, assetsLoaded }) => {
     });
   }, []);
 
-  const LOGO_URL = "https://github.com/rohankandola5-cell/Fizzy-Moon/blob/main/services/fizzy_moon_white_final.png?raw=true";
+  const LOGO_URL = "/images/logo/fizzy_moon_white_final.png";
 
   return (
     <motion.div
