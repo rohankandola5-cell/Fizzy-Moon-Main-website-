@@ -24,7 +24,6 @@ import MUSIC_SCHEDULE from './data/music-schedule.json';
 const BOOKING_URL = "https://www.sevenrooms.com/explore/fizzymoonbrewhouse/reservations/create/search/";
 
 // Local venue images - place images in /public/images/venue/ folder
-// Vite will automatically optimize these during build
 const VENUE_IMAGES = [
   {
     url: "/images/venue/IMG_4315.jpg",
