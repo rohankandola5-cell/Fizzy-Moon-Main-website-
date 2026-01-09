@@ -493,7 +493,7 @@ const App: React.FC = () => {
         {/* Hero Content */}
         <motion.div 
           style={{ y, opacity }}
-          className="z-10 text-center flex flex-col items-center w-full max-w-6xl pb-32 md:pb-24 px-4"
+          className="z-10 text-center flex flex-col items-center w-full max-w-6xl pt-24 md:pt-28 pb-32 md:pb-24 px-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: isPageReady ? 1 : 0 }}
           transition={{ duration: 0.8, ease: "easeInOut" }}
