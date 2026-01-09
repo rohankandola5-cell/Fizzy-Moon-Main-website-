@@ -4,7 +4,6 @@
 
 @layer base {
   html {
-    scroll-behavior: smooth;
     background-color: #0b1219; /* Deep Slate Blue */
   }
   

@@ -114,8 +114,10 @@ const ALL_FEATURES = [...EVENTS, ...FOOD_DRINK];
 
 const App: React.FC = () => {
   const { scrollYProgress } = useScroll();
-  const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  // Gentler parallax - reduced from -100 to -30 for smoother feel
+  const y = useTransform(scrollYProgress, [0, 0.5], [0, -30]);
+  // Slower fade - extends over 35% of scroll instead of 20%
+  const opacity = useTransform(scrollYProgress, [0, 0.35], [1, 0]);
   
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
@@ -129,6 +131,101 @@ const App: React.FC = () => {
   
   const [scrolled, setScrolled] = useState(false);
   const [currentHeroImage, setCurrentHeroImage] = useState(0);
+  const [isPageReady, setIsPageReady] = useState(false);
+
+  // Handle page readiness and smooth initial load
+  useEffect(() => {
+    // Disable automatic scroll restoration
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+
+    // Scroll to top immediately on mount (before any content shows)
+    window.scrollTo({ top: 0, behavior: 'auto' });
+
+    let isReadySet = false;
+    const setReady = () => {
+      if (isReadySet) return;
+      isReadySet = true;
+      // Ensure we're at top, then show content after layout settles
+      window.scrollTo({ top: 0, behavior: 'auto' });
+      // Wait for scroll to complete and layout to settle
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setIsPageReady(true);
+          });
+        });
+      }, 50);
+    };
+
+    // Wait for page to be ready before showing content and scrolling
+    const checkPageReady = () => {
+      // Wait for next frame to ensure DOM is painted
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          // Check if critical images are loaded (handles cached images too)
+          const logoImg = new Image();
+          const heroImg = new Image();
+          
+          let logoLoaded = false;
+          let heroLoaded = false;
+
+          const checkReady = () => {
+            if (logoLoaded && heroLoaded) {
+              setReady();
+            }
+          };
+
+          // Handle logo image
+          logoImg.onload = () => {
+            logoLoaded = true;
+            checkReady();
+          };
+          logoImg.onerror = () => {
+            logoLoaded = true; // Continue even if image fails
+            checkReady();
+          };
+          logoImg.src = '/images/logo/fizzy_moon_white_final.png';
+          // If already cached, onload won't fire, so check complete property
+          if (logoImg.complete) {
+            logoLoaded = true;
+            checkReady();
+          }
+
+          // Handle hero image
+          heroImg.onload = () => {
+            heroLoaded = true;
+            checkReady();
+          };
+          heroImg.onerror = () => {
+            heroLoaded = true; // Continue even if image fails
+            checkReady();
+          };
+          heroImg.src = VENUE_IMAGES[0].url;
+          // If already cached, onload won't fire, so check complete property
+          if (heroImg.complete) {
+            heroLoaded = true;
+            checkReady();
+          }
+
+          // Fallback: if images take too long, show page anyway after 500ms
+          setTimeout(() => {
+            setReady();
+          }, 500);
+        });
+      });
+    };
+
+    // If page is already loaded, check immediately
+    if (document.readyState === 'complete') {
+      checkPageReady();
+    } else {
+      window.addEventListener('load', checkPageReady);
+      return () => window.removeEventListener('load', checkPageReady);
+    }
+  }, []);
 
   // Preload critical images for better performance
   useEffect(() => {
@@ -297,30 +394,50 @@ const App: React.FC = () => {
         }`}
       >
         <div className="flex items-center justify-between px-6 md:px-8 max-w-[1920px] mx-auto w-full">
-          {/* Logo */}
-          <div className="pointer-events-auto z-50">
+          {/* Logo - Left */}
+          <motion.div 
+            className="pointer-events-auto z-50 flex-shrink-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isPageReady ? 1 : 0 }}
+            transition={{ duration: 1.2, delay: 0.6, ease: "easeInOut" }}
+          >
             <FizzyLogo 
               className={`w-auto object-contain cursor-pointer transition-all duration-300 text-white ${scrolled ? 'h-10 md:h-12' : 'h-12 md:h-16'}`}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             />
-          </div>
+          </motion.div>
           
-          {/* Desktop Menu - Centered */}
-          <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-auto bg-[#15222e]/30 backdrop-blur-xl border border-white/10 p-1.5 rounded-full shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] gap-1 z-50 ring-1 ring-white/5">
-            {navItems.map((item) => (
-              <button 
-                key={item} 
-                onClick={() => scrollToSection(getSectionId(item))}
-                className="px-6 py-2.5 rounded-full text-white/90 font-medium text-xs font-heading uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all duration-300 border border-transparent hover:border-white/10 active:scale-95 relative overflow-hidden group"
-                data-hover="true"
-              >
-                <span className="relative z-10">{item}</span>
-              </button>
-            ))}
-          </div>
+          {/* Desktop Menu - Center */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isPageReady ? 1 : 0 }}
+            transition={{ duration: 1.2, delay: 0.8, ease: "easeInOut" }}
+            className="hidden md:flex flex-1 justify-center pointer-events-auto"
+          >
+            <div className="flex bg-[#15222e]/50 backdrop-blur-xl border border-white/10 p-1.5 rounded-full shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] gap-1 ring-1 ring-white/5">
+              {navItems.map((item, index) => (
+                <motion.button 
+                  key={item} 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: isPageReady ? 1 : 0 }}
+                  transition={{ duration: 0.8, delay: 1.0 + (index * 0.1), ease: "easeInOut" }}
+                  onClick={() => scrollToSection(getSectionId(item))}
+                  className="px-5 py-2.5 rounded-full text-white/90 font-medium text-xs font-heading uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all duration-300 border border-transparent hover:border-white/10 active:scale-95"
+                  data-hover="true"
+                >
+                  {item}
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
 
-          {/* Right Side Actions */}
-          <div className="flex items-center gap-3 z-50 pointer-events-auto">
+          {/* Book Now - Right */}
+          <motion.div 
+            className="flex items-center gap-3 pointer-events-auto flex-shrink-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isPageReady ? 1 : 0 }}
+            transition={{ duration: 1.2, delay: 1.2, ease: "easeInOut" }}
+          >
             {/* Desktop Book Now */}
             <button
               onClick={handleBooking}
@@ -340,7 +457,7 @@ const App: React.FC = () => {
               <Calendar className="w-3.5 h-3.5" />
               <span>BOOK</span>
             </button>
-          </div>
+          </motion.div>
         </div>
       </nav>
 
@@ -377,12 +494,15 @@ const App: React.FC = () => {
         <motion.div 
           style={{ y, opacity }}
           className="z-10 text-center flex flex-col items-center w-full max-w-6xl pb-32 md:pb-24 px-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isPageReady ? 1 : 0 }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
         >
           {/* Welcome Tag */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.2 }}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: isPageReady ? 1 : 0, y: isPageReady ? 0 : 8 }}
+            transition={{ duration: 1.2, delay: 0.5, ease: "easeInOut" }}
             className="flex items-center gap-3 md:gap-4 text-[10px] md:text-sm font-bold tracking-[0.2em] uppercase mb-6 bg-black/60 px-6 py-2 rounded-full backdrop-blur-md border border-white/10 shadow-lg"
           >
             <span className="text-[#f78e2c]"><MapPin className="inline w-3 h-3 mr-1 mb-0.5" />Leamington Spa</span>
@@ -395,20 +515,25 @@ const App: React.FC = () => {
                src="/images/logo/fizzy_moon_white_final.png"
                alt="Fizzy Moon"
                className="w-[65%] md:w-[45%] max-w-4xl h-auto object-contain drop-shadow-2xl mb-2"
-               initial={{ opacity: 0, scale: 0.95 }}
-               animate={{ opacity: 1, scale: 1 }}
-               transition={{ duration: 1, ease: "easeOut" }}
+               initial={{ opacity: 0, scale: 0.98 }}
+               animate={{ opacity: isPageReady ? 1 : 0, scale: isPageReady ? 1 : 0.98 }}
+               transition={{ duration: 1.4, delay: 0.3, ease: "easeInOut" }}
              />
              {/* Descriptive Subtitle - Crucial for context */}
-             <h2 className="text-2xl md:text-4xl font-elegant italic text-[#f78e2c] mt-2 tracking-wide text-center">
+             <motion.h2 
+               initial={{ opacity: 0 }}
+               animate={{ opacity: isPageReady ? 1 : 0 }}
+               transition={{ duration: 1, delay: 0.7, ease: "easeInOut" }}
+               className="text-2xl md:text-4xl font-elegant italic text-[#f78e2c] mt-2 tracking-wide text-center"
+             >
                Where bubbles never stop flowing
-             </h2>
+             </motion.h2>
           </div>
           
           <motion.div
-             initial={{ scaleX: 0 }}
-             animate={{ scaleX: 1 }}
-             transition={{ duration: 1.5, delay: 0.5, ease: "circOut" }}
+             initial={{ scaleX: 0, opacity: 0 }}
+             animate={{ scaleX: isPageReady ? 1 : 0, opacity: isPageReady ? 1 : 0 }}
+             transition={{ duration: 1.5, delay: 0.9, ease: "easeInOut" }}
              className="w-full max-w-xs h-px bg-gradient-to-r from-transparent via-[#f78e2c]/80 to-transparent mb-8"
           />
 
@@ -416,9 +541,9 @@ const App: React.FC = () => {
           <div className="flex flex-col md:flex-row gap-4 w-full max-w-2xl px-4">
              <motion.button
                onClick={handleBooking}
-               initial={{ opacity: 0, y: 20 }}
-               animate={{ opacity: 1, y: 0 }}
-               transition={{ delay: 0.7 }}
+               initial={{ opacity: 0, y: 8 }}
+               animate={{ opacity: isPageReady ? 1 : 0, y: isPageReady ? 0 : 8 }}
+               transition={{ duration: 1, delay: 1.1, ease: "easeInOut" }}
                className="flex-1 py-4 rounded-xl bg-[#f78e2c] text-black font-bold text-sm md:text-base tracking-widest uppercase hover:bg-white transition-all duration-300 shadow-[0_0_30px_rgba(247,142,44,0.3)] flex items-center justify-center gap-2"
              >
                <Calendar className="w-4 h-4 md:w-5 md:h-5" /> Book A Table
@@ -427,18 +552,23 @@ const App: React.FC = () => {
              <div className="flex gap-4 flex-1">
                 <motion.button
                   onClick={() => scrollToSection('eat-drink')}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8 }}
-                  className="flex-1 py-4 rounded-xl bg-black/60 backdrop-blur-md border border-white/20 text-white font-bold text-xs md:text-sm tracking-widest uppercase hover:bg-white/10 hover:border-[#f78e2c] transition-all flex items-center justify-center gap-2"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: isPageReady ? 1 : 0, y: isPageReady ? 0 : 8 }}
+                  transition={{ duration: 1, delay: 1.25, ease: "easeInOut" }}
+                  className="flex-1 py-4 rounded-xl bg-black/60 backdrop-blur-md border border-white/20 text-white font-bold text-xs md:text-sm tracking-widest uppercase hover:bg-white/10 hover:border-[#f78e2c] transition-all flex flex-row items-center justify-center gap-2"
                 >
-                  <Utensils className="w-4 h-4" /> Sunday Roast
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 ml-1">
+                    <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/>
+                    <path d="M7 2v20"/>
+                    <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>
+                  </svg>
+                  <span>Sunday Roast</span>
                 </motion.button>
                 <motion.button
                   onClick={() => scrollToSection('whats-on')}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.9 }}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: isPageReady ? 1 : 0, y: isPageReady ? 0 : 8 }}
+                  transition={{ duration: 1, delay: 1.4, ease: "easeInOut" }}
                   className="flex-1 py-4 rounded-xl bg-black/60 backdrop-blur-md border border-white/20 text-white font-bold text-xs md:text-sm tracking-widest uppercase hover:bg-white/10 hover:border-[#f78e2c] transition-all flex items-center justify-center gap-2"
                 >
                   <Music className="w-4 h-4" /> Live Music
@@ -706,12 +836,13 @@ const App: React.FC = () => {
             onClick={() => setSelectedFeature(null)}
             className="fixed inset-0 z-[60] flex items-end md:items-center justify-center p-0 md:p-6 bg-black/90 backdrop-blur-xl cursor-auto"
           >
-            <motion.div
-              initial={{ scale: 0.95, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.95, y: 20 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-4xl bg-[#15222e] border-t md:border border-white/10 overflow-hidden flex flex-col shadow-2xl shadow-[#f78e2c]/10 group/modal h-[90dvh] md:h-[85vh] rounded-t-3xl md:rounded-3xl"
+          <motion.div
+            initial={{ y: '100%', opacity: 0.5 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: '100%', opacity: 0 }}
+            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-4xl bg-[#15222e] border-t md:border border-white/10 overflow-hidden flex flex-col shadow-2xl shadow-[#f78e2c]/10 group/modal h-[90dvh] md:h-[85vh] rounded-t-3xl md:rounded-3xl"
             >
               {/* Close Button */}
               <button
@@ -781,7 +912,7 @@ const App: React.FC = () => {
               <div 
                  ref={modalScrollRef}
                  onScroll={handleModalScroll} 
-                 className="flex-1 overflow-y-auto bg-[#15222e] relative scroll-smooth"
+                 className="flex-1 overflow-y-auto bg-[#15222e] relative"
                  style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.2) transparent' }}
               >
                  {/* Detail View for Artist */}

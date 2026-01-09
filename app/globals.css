@@ -4,7 +4,8 @@
 
 @layer base {
   html {
-    scroll-behavior: smooth;
+    /* Removed scroll-behavior: smooth to prevent page "sliding up" on load */
+    /* Smooth scrolling is now handled via JavaScript for intentional navigation only */
     scroll-padding-top: 100px; /* Offset for fixed header */
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: thin;  /* Firefox */
