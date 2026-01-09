@@ -480,6 +480,10 @@ const App: React.FC = () => {
               exit={{ opacity: 0 }}
               transition={{ duration: 2, ease: "easeInOut" }}
               className="absolute inset-0 w-full h-full object-cover"
+              style={{ 
+                colorScheme: 'normal',
+                filter: 'saturate(0.85) brightness(1.05)',
+              }}
               loading={currentHeroImage === 0 ? "eager" : "lazy"}
               decoding="async"
               fetchPriority={currentHeroImage === 0 ? "high" : "auto"}
