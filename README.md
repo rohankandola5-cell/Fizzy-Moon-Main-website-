@@ -90,3 +90,20 @@ NEXT_PUBLIC_USE_NORMALIZED_IMAGES=true npm run dev
 ```
 
 **Note**: Normalized images are larger in file size but ensure consistent color rendering across all devices.
+
+### Production Setup
+
+For optimal color consistency on Android and all devices, this site uses:
+- **Solid brand colors**: All primary UI elements (buttons, badges, nav) use opaque backgrounds with no opacity modifiers
+- **sRGB-normalized images**: Generated via `npm run normalize:images` (optional but recommended)
+- **WebP format only**: AVIF disabled for Android compatibility
+
+**To enable normalized images in production:**
+1. Run `npm run normalize:images` locally
+2. Set `NEXT_PUBLIC_USE_NORMALIZED_IMAGES=true` in your Vercel/deployment environment variables
+3. Deploy the `/public/images-normalized/` folder with your deployment
+
+**Create a `.env` file** (see `.env.example`):
+```bash
+NEXT_PUBLIC_USE_NORMALIZED_IMAGES=false  # Set to true after normalizing images
+```

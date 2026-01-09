@@ -508,7 +508,7 @@ const App: React.FC = () => {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: isPageReady ? 1 : 0, y: isPageReady ? 0 : 8 }}
             transition={{ duration: 1.2, delay: 0.3, ease: "easeInOut" }}
-            className="flex items-center gap-3 md:gap-4 text-[10px] md:text-sm font-bold tracking-[0.2em] uppercase mb-6 bg-black/60 px-6 py-2 rounded-full backdrop-blur-md border border-white/10 shadow-lg"
+            className="flex items-center gap-3 md:gap-4 text-[10px] md:text-sm font-bold tracking-[0.2em] uppercase mb-6 bg-brand-slate-deep px-6 py-2 rounded-full backdrop-blur-md border border-white/10 shadow-lg"
           >
             <span className="text-brand-orange"><MapPin className="inline w-3 h-3 mr-1 mb-0.5" />Leamington Spa</span>
           </motion.div>
@@ -560,7 +560,7 @@ const App: React.FC = () => {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: isPageReady ? 1 : 0, y: isPageReady ? 0 : 8 }}
                   transition={{ duration: 1, delay: 0.625, ease: "easeInOut" }}
-                  className="flex-1 py-4 rounded-xl bg-black/60 backdrop-blur-md border border-white/20 text-white font-bold text-xs md:text-sm tracking-widest uppercase hover:bg-white/10 hover:border-brand-orange transition-all flex flex-row items-center justify-center gap-2"
+                  className="flex-1 py-4 rounded-xl bg-brand-slate-deep backdrop-blur-md border border-white/20 text-white font-bold text-xs md:text-sm tracking-widest uppercase hover:bg-white/10 hover:border-brand-orange transition-all flex flex-row items-center justify-center gap-2"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 ml-1">
                     <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/>
@@ -574,7 +574,7 @@ const App: React.FC = () => {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: isPageReady ? 1 : 0, y: isPageReady ? 0 : 8 }}
                   transition={{ duration: 1, delay: 0.7, ease: "easeInOut" }}
-                  className="flex-1 py-4 rounded-xl bg-black/60 backdrop-blur-md border border-white/20 text-white font-bold text-xs md:text-sm tracking-widest uppercase hover:bg-white/10 hover:border-brand-orange transition-all flex items-center justify-center gap-2"
+                  className="flex-1 py-4 rounded-xl bg-brand-slate-deep backdrop-blur-md border border-white/20 text-white font-bold text-xs md:text-sm tracking-widest uppercase hover:bg-white/10 hover:border-brand-orange transition-all flex items-center justify-center gap-2"
                 >
                   <Music className="w-4 h-4" /> Live Music
                 </motion.button>
