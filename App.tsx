@@ -395,49 +395,31 @@ const App: React.FC = () => {
       >
         <div className="flex items-center justify-between px-6 md:px-8 max-w-[1920px] mx-auto w-full">
           {/* Logo - Left */}
-          <motion.div 
-            className="pointer-events-auto z-50 flex-shrink-0"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: isPageReady ? 1 : 0 }}
-            transition={{ duration: 1.2, delay: 0.6, ease: "easeInOut" }}
-          >
+          <div className="pointer-events-auto z-50 flex-shrink-0">
             <FizzyLogo 
               className={`w-auto object-contain cursor-pointer transition-all duration-300 text-white ${scrolled ? 'h-10 md:h-12' : 'h-12 md:h-16'}`}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             />
-          </motion.div>
+          </div>
           
           {/* Desktop Menu - Center */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: isPageReady ? 1 : 0 }}
-            transition={{ duration: 1.2, delay: 0.8, ease: "easeInOut" }}
-            className="hidden md:flex flex-1 justify-center pointer-events-auto"
-          >
+          <div className="hidden md:flex flex-1 justify-center pointer-events-auto">
             <div className="flex bg-[#15222e]/50 backdrop-blur-xl border border-white/10 p-1.5 rounded-full shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] gap-1 ring-1 ring-white/5">
-              {navItems.map((item, index) => (
-                <motion.button 
+              {navItems.map((item) => (
+                <button 
                   key={item} 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: isPageReady ? 1 : 0 }}
-                  transition={{ duration: 0.8, delay: 1.0 + (index * 0.1), ease: "easeInOut" }}
                   onClick={() => scrollToSection(getSectionId(item))}
                   className="px-5 py-2.5 rounded-full text-white/90 font-medium text-xs font-heading uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all duration-300 border border-transparent hover:border-white/10 active:scale-95"
                   data-hover="true"
                 >
                   {item}
-                </motion.button>
+                </button>
               ))}
             </div>
-          </motion.div>
+          </div>
 
           {/* Book Now - Right */}
-          <motion.div 
-            className="flex items-center gap-3 pointer-events-auto flex-shrink-0"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: isPageReady ? 1 : 0 }}
-            transition={{ duration: 1.2, delay: 1.2, ease: "easeInOut" }}
-          >
+          <div className="flex items-center gap-3 pointer-events-auto flex-shrink-0">
             {/* Desktop Book Now */}
             <button
               onClick={handleBooking}
@@ -457,7 +439,7 @@ const App: React.FC = () => {
               <Calendar className="w-3.5 h-3.5" />
               <span>BOOK</span>
             </button>
-          </motion.div>
+          </div>
         </div>
       </nav>
 
