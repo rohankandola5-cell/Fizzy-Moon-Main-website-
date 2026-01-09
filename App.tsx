@@ -23,30 +23,35 @@ import MUSIC_SCHEDULE from './data/music-schedule.json';
 
 const BOOKING_URL = "https://www.sevenrooms.com/explore/fizzymoonbrewhouse/reservations/create/search/";
 
+// Image normalization: Set to 'normalized' to use sRGB-normalized images from /images-normalized/
+// Run 'npm run normalize:images' first to generate normalized versions
+const IMAGE_PREFIX = process.env.NEXT_PUBLIC_USE_NORMALIZED_IMAGES === 'true' ? '/images-normalized' : '/images';
+
 // Local venue images - place images in /public/images/venue/ folder
+// After running normalize:images, set NEXT_PUBLIC_USE_NORMALIZED_IMAGES=true to use normalized versions
 const VENUE_IMAGES = [
   {
-    url: "/images/venue/IMG_4315.jpg",
+    url: `${IMAGE_PREFIX}/venue/IMG_4315.jpg`,
     alt: "Fizzy Moon Interior",
     label: "Main Bar"
   },
   {
-    url: "/images/venue/IMG_4314.jpg",
+    url: `${IMAGE_PREFIX}/venue/IMG_4314.jpg`,
     alt: "Warm Interior Lounge",
     label: "Warm & Welcoming"
   },
   {
-    url: "/images/venue/IMG_4316.jpg",
+    url: `${IMAGE_PREFIX}/venue/IMG_4316.jpg`,
     alt: "Dining Area",
     label: "Brewhouse & Grill"
   },
   {
-    url: "/images/venue/IMG_4317.jpg",
+    url: `${IMAGE_PREFIX}/venue/IMG_4317.jpg`,
     alt: "Garden Lounge",
     label: "Garden Atmosphere"
   },
   {
-    url: "/images/venue/IMG_7636_(1).jpg",
+    url: `${IMAGE_PREFIX}/venue/IMG_7636_(1).jpg`,
     alt: "Fizzy Moon Event",
     label: "Live Events"
   }
@@ -70,7 +75,7 @@ const EVENTS: FeatureItem[] = [
     name: 'Sunday Roast', 
     category: 'Weekly Tradition', 
     tag: 'FOOD EVENT', 
-    image: 'https://images.unsplash.com/photo-1606850780554-b55eaefa84cb?q=80&w=1000&auto=format&fit=crop',
+    image: '/images/events/IMG_9614.jpg',
     description: 'A proper Sunday Feast. Slow-roasted meats, giant yorkshire puddings, roast potatoes and seasonal veg. Served all day Sunday until sold out.'
   },
   { 
@@ -376,7 +381,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen text-white selection:bg-[#f78e2c] selection:text-black cursor-auto md:cursor-none overflow-x-hidden font-sans">
+    <div className="relative min-h-screen text-white selection:bg-brand-orange selection:text-black cursor-auto md:cursor-none overflow-x-hidden font-sans">
       <CustomCursor />
       
       {/* Promotional Modal */}
@@ -389,7 +394,7 @@ const App: React.FC = () => {
       <nav 
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled 
-            ? 'py-4 bg-[#0b1219]/90 backdrop-blur-xl border-b border-white/10 shadow-lg pointer-events-auto' 
+            ? 'py-4 bg-brand-slate-deep backdrop-blur-md border-b border-white/5 shadow-lg pointer-events-auto' 
             : 'py-6 pointer-events-none'
         }`}
       >
@@ -399,7 +404,7 @@ const App: React.FC = () => {
             className="pointer-events-auto z-50 flex-shrink-0"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.4, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+            transition={{ duration: 1.4, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
           >
             <FizzyLogo 
               className={`w-auto object-contain cursor-pointer transition-all duration-300 text-white ${scrolled ? 'h-10 md:h-12' : 'h-12 md:h-16'}`}
@@ -411,16 +416,16 @@ const App: React.FC = () => {
           <motion.div 
             initial={{ opacity: 0, y: -15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.6, delay: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+            transition={{ duration: 1.6, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
             className="hidden md:flex flex-1 justify-center pointer-events-auto"
           >
-            <div className="flex bg-[#15222e]/50 backdrop-blur-xl border border-white/10 p-1.5 rounded-full shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] gap-1 ring-1 ring-white/5">
+            <div className="flex bg-brand-slate-deep backdrop-blur-xl border border-white/20 p-1.5 rounded-full shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] gap-1 ring-1 ring-white/5">
               {navItems.map((item, index) => (
                 <motion.button 
                   key={item} 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ duration: 1.2, delay: 0.9 + (index * 0.15), ease: "easeOut" }}
+                  transition={{ duration: 1.2, delay: 0.45 + (index * 0.1), ease: "easeOut" }}
                   onClick={() => scrollToSection(getSectionId(item))}
                   className="px-5 py-2.5 rounded-full text-white/90 font-medium text-xs font-heading uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all duration-300 border border-transparent hover:border-white/10 active:scale-95"
                   data-hover="true"
@@ -436,12 +441,12 @@ const App: React.FC = () => {
             className="flex items-center gap-3 pointer-events-auto flex-shrink-0"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.4, delay: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+            transition={{ duration: 1.4, delay: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
           >
             {/* Desktop Book Now */}
             <button
               onClick={handleBooking}
-              className="hidden md:flex items-center gap-2 bg-[#f78e2c] text-black px-6 py-3 rounded-full font-bold font-heading text-xs tracking-widest hover:bg-white hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(247,142,44,0.4)] border border-[#f78e2c]"
+              className="hidden md:flex items-center gap-2 bg-brand-orange text-black px-6 py-3 rounded-full font-bold font-heading text-xs tracking-widest hover:bg-white hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(247,142,44,0.4)] border border-brand-orange"
               data-hover="true"
             >
               <Calendar className="w-4 h-4" />
@@ -451,7 +456,7 @@ const App: React.FC = () => {
             {/* Mobile Book Button */}
             <button
               onClick={handleBooking}
-              className="md:hidden flex items-center gap-2 bg-[#f78e2c] text-black px-4 py-2.5 rounded-full font-bold font-heading text-[10px] tracking-widest hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(247,142,44,0.4)] border border-[#f78e2c]"
+              className="md:hidden flex items-center gap-2 bg-brand-orange text-black px-4 py-2.5 rounded-full font-bold font-heading text-[10px] tracking-widest hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(247,142,44,0.4)] border border-brand-orange"
               data-hover="true"
             >
               <Calendar className="w-3.5 h-3.5" />
@@ -481,12 +486,12 @@ const App: React.FC = () => {
             />
           </AnimatePresence>
           {/* Dark Overlay for Text Readability - Balanced to show the venue warmth */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-[#0b1219]" />
-          <div className="absolute inset-0 bg-black/30 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-brand-slate-deep" />
+          <div className="absolute inset-0 bg-black/20" />
         </div>
         
         {/* Bubbles - Restored to Background */}
-        <div className="absolute inset-0 z-0 pointer-events-none mix-blend-screen opacity-60">
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-60">
            <Bubbles />
         </div>
 
@@ -502,10 +507,10 @@ const App: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: isPageReady ? 1 : 0, y: isPageReady ? 0 : 8 }}
-            transition={{ duration: 1.2, delay: 0.5, ease: "easeInOut" }}
+            transition={{ duration: 1.2, delay: 0.3, ease: "easeInOut" }}
             className="flex items-center gap-3 md:gap-4 text-[10px] md:text-sm font-bold tracking-[0.2em] uppercase mb-6 bg-black/60 px-6 py-2 rounded-full backdrop-blur-md border border-white/10 shadow-lg"
           >
-            <span className="text-[#f78e2c]"><MapPin className="inline w-3 h-3 mr-1 mb-0.5" />Leamington Spa</span>
+            <span className="text-brand-orange"><MapPin className="inline w-3 h-3 mr-1 mb-0.5" />Leamington Spa</span>
           </motion.div>
 
           {/* Main Title Block */}
@@ -514,17 +519,17 @@ const App: React.FC = () => {
              <motion.img 
                src="/images/logo/fizzy_moon_white_final.png"
                alt="Fizzy Moon"
-               className="w-[65%] md:w-[45%] max-w-4xl h-auto object-contain drop-shadow-2xl mb-2"
+               className="w-[55%] md:w-[35%] max-w-4xl h-auto object-contain drop-shadow-2xl mb-2"
                initial={{ opacity: 0, scale: 0.98 }}
                animate={{ opacity: isPageReady ? 1 : 0, scale: isPageReady ? 1 : 0.98 }}
-               transition={{ duration: 1.4, delay: 0.3, ease: "easeInOut" }}
+               transition={{ duration: 1.4, delay: 0.2, ease: "easeInOut" }}
              />
              {/* Descriptive Subtitle - Crucial for context */}
              <motion.h2 
                initial={{ opacity: 0 }}
                animate={{ opacity: isPageReady ? 1 : 0 }}
-               transition={{ duration: 1, delay: 0.7, ease: "easeInOut" }}
-               className="text-2xl md:text-4xl font-elegant italic text-[#f78e2c] mt-2 tracking-wide text-center"
+               transition={{ duration: 1, delay: 0.4, ease: "easeInOut" }}
+               className="text-3xl md:text-5xl font-elegant italic text-brand-orange mt-4 md:mt-6 tracking-wide text-center"
              >
                Where bubbles never stop flowing
              </motion.h2>
@@ -533,8 +538,8 @@ const App: React.FC = () => {
           <motion.div
              initial={{ scaleX: 0, opacity: 0 }}
              animate={{ scaleX: isPageReady ? 1 : 0, opacity: isPageReady ? 1 : 0 }}
-             transition={{ duration: 1.5, delay: 0.9, ease: "easeInOut" }}
-             className="w-full max-w-xs h-px bg-gradient-to-r from-transparent via-[#f78e2c]/80 to-transparent mb-8"
+             transition={{ duration: 1.5, delay: 0.5, ease: "easeInOut" }}
+             className="w-full max-w-xs h-px bg-gradient-to-r from-transparent via-brand-orange to-transparent mb-8"
           />
 
           {/* PRIMARY CALLS TO ACTION - Immediate Visibility */}
@@ -543,19 +548,19 @@ const App: React.FC = () => {
                onClick={handleBooking}
                initial={{ opacity: 0, y: 8 }}
                animate={{ opacity: isPageReady ? 1 : 0, y: isPageReady ? 0 : 8 }}
-               transition={{ duration: 1, delay: 1.1, ease: "easeInOut" }}
-               className="flex-1 py-4 rounded-xl bg-[#f78e2c] text-black font-bold text-sm md:text-base tracking-widest uppercase hover:bg-white transition-all duration-300 shadow-[0_0_30px_rgba(247,142,44,0.3)] flex items-center justify-center gap-2"
+               transition={{ duration: 1, delay: 0.55, ease: "easeInOut" }}
+               className="flex-1 py-5 md:py-6 rounded-xl bg-brand-orange text-black font-bold text-base md:text-lg tracking-widest uppercase hover:bg-white hover:scale-105 transition-all duration-300 shadow-[0_0_40px_rgba(247,142,44,0.5)] flex items-center justify-center gap-2"
              >
                <Calendar className="w-4 h-4 md:w-5 md:h-5" /> Book A Table
              </motion.button>
              
-             <div className="flex gap-4 flex-1">
+             <div className="flex gap-6 flex-1">
                 <motion.button
                   onClick={() => scrollToSection('eat-drink')}
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: isPageReady ? 1 : 0, y: isPageReady ? 0 : 8 }}
-                  transition={{ duration: 1, delay: 1.25, ease: "easeInOut" }}
-                  className="flex-1 py-4 rounded-xl bg-black/60 backdrop-blur-md border border-white/20 text-white font-bold text-xs md:text-sm tracking-widest uppercase hover:bg-white/10 hover:border-[#f78e2c] transition-all flex flex-row items-center justify-center gap-2"
+                  transition={{ duration: 1, delay: 0.625, ease: "easeInOut" }}
+                  className="flex-1 py-4 rounded-xl bg-black/60 backdrop-blur-md border border-white/20 text-white font-bold text-xs md:text-sm tracking-widest uppercase hover:bg-white/10 hover:border-brand-orange transition-all flex flex-row items-center justify-center gap-2"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 ml-1">
                     <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/>
@@ -568,8 +573,8 @@ const App: React.FC = () => {
                   onClick={() => scrollToSection('whats-on')}
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: isPageReady ? 1 : 0, y: isPageReady ? 0 : 8 }}
-                  transition={{ duration: 1, delay: 1.4, ease: "easeInOut" }}
-                  className="flex-1 py-4 rounded-xl bg-black/60 backdrop-blur-md border border-white/20 text-white font-bold text-xs md:text-sm tracking-widest uppercase hover:bg-white/10 hover:border-[#f78e2c] transition-all flex items-center justify-center gap-2"
+                  transition={{ duration: 1, delay: 0.7, ease: "easeInOut" }}
+                  className="flex-1 py-4 rounded-xl bg-black/60 backdrop-blur-md border border-white/20 text-white font-bold text-xs md:text-sm tracking-widest uppercase hover:bg-white/10 hover:border-brand-orange transition-all flex items-center justify-center gap-2"
                 >
                   <Music className="w-4 h-4" /> Live Music
                 </motion.button>
@@ -578,7 +583,7 @@ const App: React.FC = () => {
         </motion.div>
 
         {/* MARQUEE - Shifted to bottom */}
-        <div className="absolute bottom-0 left-0 w-full py-3 bg-[#f78e2c] text-black z-20 overflow-hidden border-t-4 border-black shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+        <div className="absolute bottom-0 left-0 w-full py-3 bg-brand-orange text-black z-20 overflow-hidden border-t-2 border-black shadow-[0_-8px_30px_rgba(0,0,0,0.4)]">
           <motion.div 
             className="flex w-fit will-change-transform"
             animate={{ x: "-50%" }}
@@ -603,7 +608,7 @@ const App: React.FC = () => {
       </header>
 
       {/* BOOKINGS SECTION */}
-      <section id="bookings" className="relative z-10 py-20 md:py-32 px-4 md:px-6 bg-gradient-to-b from-[#0b1219] to-[#15222e] border-t border-white/10">
+      <section id="bookings" className="relative z-10 py-20 md:py-32 px-4 md:px-6 bg-gradient-to-b from-brand-slate-deep to-brand-slate-dark border-t border-white/10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 md:mb-20">
              <h2 className="text-5xl md:text-9xl font-heading font-bold opacity-10 text-white leading-none">
@@ -611,7 +616,7 @@ const App: React.FC = () => {
              </h2>
              <div className="relative -mt-6 md:-mt-16 z-10">
                <p className="text-3xl md:text-5xl font-elegant italic text-white mb-2">Secure your spot</p>
-               <p className="text-[#f78e2c] font-mono uppercase tracking-widest text-sm md:text-base">
+               <p className="text-brand-orange font-mono uppercase tracking-widest text-sm md:text-base">
                  Choose your experience
                </p>
              </div>
@@ -649,7 +654,7 @@ const App: React.FC = () => {
                 subtitle: 'Celebration Central',
                 price: 'Book Now', 
                 color: 'gold', 
-                accent: 'bg-gradient-to-br from-[#f78e2c]/20 to-black border-[#f78e2c]/60 hover:border-[#f78e2c] shadow-[0_0_30px_rgba(247,142,44,0.1)]', 
+                accent: 'bg-gradient-to-br from-brand-orange to-black border-brand-orange hover:border-brand-orange shadow-[0_0_30px_rgba(247,142,44,0.1)]', 
                 desc: 'The best seat in the house. Located centrally in our heated marquee. Perfect for birthdays and those who want to be seen.',
                 features: [
                   { icon: Crown, text: 'Center of Action' },
@@ -678,25 +683,25 @@ const App: React.FC = () => {
                   className={`relative p-8 md:p-10 border backdrop-blur-md flex flex-col min-h-[500px] transition-all duration-300 ${ticket.accent} rounded-2xl group`}
                 >
                   <div className="flex-1">
-                    <div className="flex justify-between items-start mb-2">
-                       <h3 className="text-2xl md:text-3xl font-booking-header font-bold text-white leading-none uppercase">{ticket.name}</h3>
-                       {ticket.color === 'gold' && <Crown className="text-[#f78e2c] w-6 h-6 animate-pulse" />}
+                    <div className="flex justify-between items-start mb-3">
+                       <h3 className="text-2xl md:text-3xl font-semibold text-white leading-tight tracking-tight">{ticket.name}</h3>
+                       {ticket.color === 'gold' && <Crown className="text-brand-orange w-6 h-6 animate-pulse" />}
                     </div>
-                    <p className={`text-sm font-bold uppercase tracking-widest mb-6 ${ticket.color === 'gold' ? 'text-[#f78e2c]' : ticket.color === 'pink' ? 'text-red-500' : ticket.color === 'purple' ? 'text-purple-500' : 'text-cyan-500'}`}>
+                    <p className={`text-sm font-elegant italic mb-6 ${ticket.color === 'gold' ? 'text-brand-orange' : ticket.color === 'pink' ? 'text-red-500' : ticket.color === 'purple' ? 'text-purple-500' : 'text-cyan-500'}`}>
                       {ticket.subtitle}
                     </p>
                     
-                    <p className="text-gray-300 mb-8 leading-relaxed font-light text-lg">{ticket.desc}</p>
+                    <p className="text-gray-200 mb-8 leading-relaxed font-light text-base">{ticket.desc}</p>
                     
                     <div className="h-px w-full bg-white/10 mb-8" />
 
-                    <ul className="space-y-5 text-sm text-gray-200">
+                    <ul className="space-y-4 text-sm text-gray-200 font-light">
                       {ticket.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-center gap-4">
+                        <li key={idx} className="flex items-center gap-3">
                           <div className={`p-2 rounded-full bg-white/5`}>
-                             <feature.icon className={`w-4 h-4 ${ticket.color === 'gold' ? 'text-[#f78e2c]' : ticket.color === 'pink' ? 'text-red-500' : ticket.color === 'purple' ? 'text-purple-500' : 'text-cyan-500'}`} /> 
+                             <feature.icon className={`w-4 h-4 ${ticket.color === 'gold' ? 'text-brand-orange' : ticket.color === 'pink' ? 'text-red-500' : ticket.color === 'purple' ? 'text-purple-500' : 'text-cyan-500'}`} /> 
                           </div>
-                          {feature.text}
+                          <span className="font-normal">{feature.text}</span>
                         </li>
                       ))}
                     </ul>
@@ -704,8 +709,8 @@ const App: React.FC = () => {
                   
                   <button 
                     onClick={handleBooking}
-                    className={`w-full py-4 text-sm font-bold uppercase tracking-[0.2em] border transition-all duration-300 mt-8 rounded-xl
-                      ${ticket.color === 'gold' ? 'bg-[#f78e2c] text-black border-[#f78e2c] hover:bg-white hover:border-white' : 'border-white/20 text-white hover:bg-white hover:text-black'}
+                    className={`w-full py-4 text-sm font-semibold tracking-wide border transition-all duration-300 mt-8 rounded-xl
+                      ${ticket.color === 'gold' ? 'bg-brand-orange text-black border-brand-orange hover:bg-white hover:border-white' : 'border-white/20 text-white hover:bg-white hover:text-black'}
                     `}
                   >
                     {ticket.price}
@@ -718,12 +723,12 @@ const App: React.FC = () => {
       </section>
 
       {/* WHAT'S ON SECTION */}
-      <section id="whats-on" className="relative z-10 py-20 md:py-32 bg-[#15222e] border-t border-white/5">
+      <section id="whats-on" className="relative z-10 py-20 md:py-32 bg-brand-slate-dark border-t border-white/5">
          <div className="max-w-[1600px] mx-auto px-4 md:px-6">
             <div className="flex flex-col items-center mb-16">
-              <span className="text-[#f78e2c] font-mono text-sm tracking-[0.3em] uppercase mb-4">Live & Loud</span>
+              <span className="text-brand-orange font-mono text-sm tracking-[0.3em] uppercase mb-4">Live & Loud</span>
               <h2 className="text-5xl md:text-8xl font-heading font-bold uppercase text-center">
-                What's <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f78e2c] to-amber-500">On</span>
+                What's <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-amber-500">On</span>
               </h2>
             </div>
             
@@ -736,18 +741,18 @@ const App: React.FC = () => {
       </section>
 
       {/* MERGED SECTION */}
-      <section id="eat-drink" className="relative z-10 py-24 md:py-32 bg-[#0b1219] border-t border-white/10">
+      <section id="eat-drink" className="relative z-10 py-20 md:py-32 bg-brand-slate-deep border-t border-white/10">
         <div className="max-w-[1600px] mx-auto px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-end mb-16 px-4">
              <div>
                <div className="flex items-center gap-4 mb-6">
-                  <span className="text-[#f78e2c] font-mono text-sm tracking-[0.3em] uppercase">Taste Makers</span>
-                  <div className="h-px w-12 bg-[#f78e2c]/50" />
+                  <span className="text-brand-orange font-mono text-sm tracking-[0.3em] uppercase">Taste Makers</span>
+                  <div className="h-px w-12 bg-brand-orange" />
                </div>
                <h2 className="text-5xl md:text-7xl font-heading font-bold uppercase leading-none mb-6">
-                 More Than <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f78e2c] to-amber-500">A Pub</span>
+                 More Than <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-amber-500">A Pub</span>
                </h2>
-               <p className="text-lg text-gray-300 font-light leading-relaxed max-w-xl mb-8">
+               <p className="text-lg text-gray-200 font-light leading-relaxed max-w-xl mb-8">
                  Fizzy Moon is an extension of your night out. A place where the drinks are crafted in-house, the food is fire-kissed, and the music never stops.
                </p>
                <div className="flex flex-wrap gap-8 border-t border-white/10 pt-6">
@@ -757,8 +762,8 @@ const App: React.FC = () => {
                     { icon: Music, label: "Live Music" },
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-3 text-white/80 group">
-                      <div className="p-2 rounded-full bg-white/5 group-hover:bg-[#f78e2c] transition-colors duration-300">
-                        <item.icon className="w-4 h-4 text-[#f78e2c] group-hover:text-black transition-colors duration-300" />
+                      <div className="p-2 rounded-full bg-white/5 group-hover:bg-brand-orange transition-colors duration-300">
+                        <item.icon className="w-4 h-4 text-brand-orange group-hover:text-black transition-colors duration-300" />
                       </div>
                       <span className="font-bold uppercase text-xs tracking-widest">{item.label}</span>
                     </div>
@@ -769,7 +774,7 @@ const App: React.FC = () => {
              <div className="flex justify-start lg:justify-end pb-2">
                 <button 
                   onClick={handleBooking}
-                  className="group relative px-8 py-4 bg-white/5 border border-white/20 text-white font-bold tracking-[0.2em] uppercase transition-all duration-300 hover:bg-[#f78e2c] hover:border-[#f78e2c] hover:text-black overflow-hidden rounded-full"
+                  className="group relative px-8 py-4 bg-white/5 border border-white/20 text-white font-bold tracking-[0.2em] uppercase transition-all duration-300 hover:bg-brand-orange hover:border-brand-orange hover:text-black overflow-hidden rounded-full"
                   data-hover="true"
                 >
                    <span className="relative z-10 flex items-center gap-2">
@@ -788,19 +793,19 @@ const App: React.FC = () => {
       </section>
 
       {/* FAQ SECTION */}
-      <section id="faq" className="relative z-10 py-24 bg-[#080d11] border-t border-white/10">
+      <section id="faq" className="relative z-10 py-20 md:py-32 bg-brand-slate-darker border-t border-white/10">
           <div className="max-w-4xl mx-auto px-6">
               <div className="text-center mb-16">
                   <h2 className="text-4xl md:text-6xl font-heading font-bold uppercase mb-4">
-                      Common <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f78e2c] to-amber-500">Questions</span>
+                      Common <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-amber-500">Questions</span>
                   </h2>
-                  <p className="text-gray-400">Everything you need to know before you go.</p>
+                  <p className="text-gray-300">Everything you need to know before you go.</p>
               </div>
               <FAQAccordion />
           </div>
       </section>
 
-      <footer id="contact" className="relative z-10 border-t border-white/10 py-12 md:py-16 bg-[#0b1219]/80 backdrop-blur-xl">
+      <footer id="contact" className="relative z-10 border-t border-white/10 py-12 md:py-16 bg-brand-slate-deep backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
           <div>
              <div className="mb-6">
@@ -810,16 +815,16 @@ const App: React.FC = () => {
                  className="h-12 md:h-14 w-auto object-contain"
                />
              </div>
-             <div className="flex gap-2 text-xs font-mono text-gray-400">
+             <div className="flex gap-2 text-xs font-mono text-gray-300">
                <span>35 Regent St, Leamington Spa CV32 5EE</span>
              </div>
           </div>
           
           <div className="flex gap-6 md:gap-8 flex-wrap">
-            <a href="#" className="text-gray-400 hover:text-white font-bold uppercase text-xs tracking-widest transition-colors cursor-pointer" data-hover="true">
+            <a href="#" className="text-gray-300 hover:text-white font-bold uppercase text-xs tracking-widest transition-colors cursor-pointer" data-hover="true">
               Instagram
             </a>
-            <a href="#" className="text-gray-400 hover:text-white font-bold uppercase text-xs tracking-widest transition-colors cursor-pointer" data-hover="true">
+            <a href="#" className="text-gray-300 hover:text-white font-bold uppercase text-xs tracking-widest transition-colors cursor-pointer" data-hover="true">
               Facebook
             </a>
           </div>
@@ -842,7 +847,7 @@ const App: React.FC = () => {
             exit={{ y: '100%', opacity: 0 }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-4xl bg-[#15222e] border-t md:border border-white/10 overflow-hidden flex flex-col shadow-2xl shadow-[#f78e2c]/10 group/modal h-[90dvh] md:h-[85vh] rounded-t-3xl md:rounded-3xl"
+            className="relative w-full max-w-4xl bg-brand-slate-dark border-t md:border border-white/10 overflow-hidden flex flex-col shadow-2xl group/modal h-[90dvh] md:h-[85vh] rounded-t-3xl md:rounded-3xl"
             >
               {/* Close Button */}
               <button
@@ -866,9 +871,16 @@ const App: React.FC = () => {
                           src={selectedFeature.image} 
                           alt={selectedFeature.name} 
                           className="absolute inset-0 w-full h-full object-cover"
+                          onError={(e) => {
+                            console.error('Image failed to load:', selectedFeature.image);
+                            console.error('Error event:', e);
+                          }}
+                          onLoad={() => {
+                            console.log('Image loaded successfully:', selectedFeature.image);
+                          }}
                         />
                         
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#15222e] via-[#15222e]/40 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-brand-slate-dark via-brand-slate-dark/40 to-transparent" />
 
                         {/* Navigation Buttons for Main Features */}
                         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full flex justify-between px-4 pointer-events-none">
@@ -893,7 +905,7 @@ const App: React.FC = () => {
                         </div>
 
                         <div className="absolute bottom-0 left-0 w-full p-6 md:p-8 flex flex-col justify-end items-start z-10">
-                           <div className="flex items-center gap-3 text-[#f78e2c] mb-2">
+                           <div className="flex items-center gap-3 text-brand-orange mb-2">
                              <Calendar className="w-4 h-4" />
                              <span className="font-mono text-xs md:text-sm tracking-widest uppercase">{selectedFeature.tag}</span>
                            </div>
@@ -912,7 +924,7 @@ const App: React.FC = () => {
               <div 
                  ref={modalScrollRef}
                  onScroll={handleModalScroll} 
-                 className="flex-1 overflow-y-auto bg-[#15222e] relative"
+                 className="flex-1 overflow-y-auto bg-brand-slate-dark relative"
                  style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.2) transparent' }}
               >
                  {/* Detail View for Artist */}
@@ -926,10 +938,10 @@ const App: React.FC = () => {
                             className="h-full flex flex-col"
                         >
                             {/* Sticky Back Button Header */}
-                            <div className="sticky top-0 z-40 bg-[#15222e]/95 backdrop-blur-xl border-b border-white/10 p-4">
+                            <div className="sticky top-0 z-40 bg-brand-slate-dark/95 backdrop-blur-xl border-b border-white/10 p-4">
                                 <button 
                                     onClick={() => setSelectedEvent(null)}
-                                    className="flex items-center gap-2 text-white/70 hover:text-[#f78e2c] transition-colors font-mono uppercase text-xs tracking-widest"
+                                    className="flex items-center gap-2 text-white/70 hover:text-brand-orange transition-colors font-mono uppercase text-xs tracking-widest"
                                 >
                                     <ArrowLeft className="w-4 h-4" /> Back to Calendar
                                 </button>
@@ -938,15 +950,15 @@ const App: React.FC = () => {
                             {/* Artist Hero Image */}
                             <div className="relative w-full aspect-video md:aspect-[21/9] shrink-0 overflow-hidden">
                                 <img src={selectedEvent.image} alt={selectedEvent.act} className="w-full h-full object-cover" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#15222e] to-transparent" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-brand-slate-dark to-transparent" />
                                 <div className="absolute bottom-0 left-0 p-6 md:p-8">
-                                    <div className="inline-block px-3 py-1 bg-[#f78e2c] text-black font-bold text-[10px] tracking-widest uppercase mb-2 rounded">
+                                    <div className="inline-block px-3 py-1 bg-brand-orange text-black font-bold text-[10px] tracking-widest uppercase mb-2 rounded">
                                         {selectedEvent.genre}
                                     </div>
                                     <h2 className="text-4xl md:text-6xl font-heading font-bold uppercase text-white leading-none mb-1">
                                         {selectedEvent.act}
                                     </h2>
-                                    <p className="text-xl text-gray-300 font-medium">
+                                    <p className="text-xl text-gray-200 font-medium">
                                         {selectedEvent.date} @ {selectedEvent.time}
                                     </p>
                                 </div>
@@ -954,8 +966,8 @@ const App: React.FC = () => {
 
                             {/* Artist Info */}
                             <div className="p-6 md:p-8 max-w-3xl">
-                                <h4 className="text-[#f78e2c] font-mono text-sm uppercase tracking-widest mb-4">About The Artist</h4>
-                                <p className="text-gray-300 text-lg leading-relaxed font-light mb-8">
+                                <h4 className="text-brand-orange font-mono text-sm uppercase tracking-widest mb-4">About The Artist</h4>
+                                <p className="text-gray-200 text-lg leading-relaxed font-light mb-8">
                                     {selectedEvent.description || "Join us for an unforgettable night of live music, great drinks, and amazing atmosphere."}
                                 </p>
                                 
@@ -968,7 +980,7 @@ const App: React.FC = () => {
 
                                 <button 
                                     onClick={handleBooking}
-                                    className="w-full py-5 rounded-xl bg-[#f78e2c] text-black font-bold font-heading uppercase tracking-widest hover:bg-white hover:scale-[1.01] transition-all shadow-lg shadow-orange-500/20"
+                                    className="w-full py-5 rounded-xl bg-brand-orange text-black font-bold font-heading uppercase tracking-widest hover:bg-white hover:scale-[1.01] transition-all shadow-lg shadow-orange-500/20"
                                 >
                                     Book Your Table
                                 </button>
@@ -983,14 +995,16 @@ const App: React.FC = () => {
                             exit={{ opacity: 0 }}
                             className="max-w-4xl mx-auto p-5 md:p-8"
                         >
-                            <p className="text-gray-300 leading-relaxed text-sm md:text-base font-light mb-8 max-w-2xl">
-                               {selectedFeature.description}
-                            </p>
+                            {selectedFeature.id !== 'e2' && (
+                              <p className="text-gray-200 leading-relaxed text-sm md:text-base font-light mb-8 max-w-2xl">
+                                 {selectedFeature.description}
+                              </p>
+                            )}
 
                             {selectedFeature.id === 'e1' ? (
                                <>
                                  {/* Month Navigation */}
-                                 <div className="sticky top-0 z-30 py-2 mb-6 -mx-5 px-5 md:-mx-8 md:px-8 bg-[#15222e]/95 backdrop-blur-sm border-b border-white/5 flex justify-start overflow-x-auto no-scrollbar">
+                                 <div className="sticky top-0 z-30 py-2 mb-6 -mx-5 px-5 md:-mx-8 md:px-8 bg-brand-slate-dark/95 backdrop-blur-sm border-b border-white/5 flex justify-start overflow-x-auto no-scrollbar">
                                      <div className="relative flex items-center bg-white/5 backdrop-blur-xl border border-white/10 rounded-full p-1 shadow-2xl">
                                          {MUSIC_SCHEDULE.map((month, idx) => {
                                              const isActive = activeMonth === idx;
@@ -998,12 +1012,12 @@ const App: React.FC = () => {
                                                  <button
                                                      key={idx}
                                                      onClick={() => scrollToMonth(idx)}
-                                                     className={`relative px-3 py-1.5 md:px-4 md:py-2 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest transition-colors duration-300 z-10 shrink-0 ${isActive ? 'text-black' : 'text-gray-400 hover:text-white'}`}
+                                                     className={`relative px-3 py-1.5 md:px-4 md:py-2 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest transition-colors duration-300 z-10 shrink-0 ${isActive ? 'text-black' : 'text-gray-300 hover:text-white'}`}
                                                  >
                                                      {isActive && (
                                                          <motion.div
                                                              layoutId="activePill"
-                                                             className="absolute inset-0 bg-[#f78e2c] rounded-full -z-10"
+                                                             className="absolute inset-0 bg-brand-orange rounded-full -z-10"
                                                              transition={{ type: "spring", stiffness: 300, damping: 30 }}
                                                          />
                                                      )}
@@ -1022,7 +1036,7 @@ const App: React.FC = () => {
                                          <h5 className="text-4xl md:text-5xl font-heading font-black uppercase text-white/5 tracking-tighter">
                                            {month.month}
                                          </h5>
-                                         <div className="h-px flex-1 bg-gradient-to-r from-[#f78e2c]/30 to-transparent" />
+                                         <div className="h-px flex-1 bg-gradient-to-r from-brand-orange/30 to-transparent" />
                                        </div>
 
                                        <div className="grid gap-3">
@@ -1030,10 +1044,10 @@ const App: React.FC = () => {
                                            <div 
                                               key={i} 
                                               onClick={() => setSelectedEvent(event)} // Open Detail View
-                                              className={`cursor-pointer relative flex items-center gap-4 p-4 rounded-xl border transition-all duration-300 group/item overflow-hidden ${event.special ? 'bg-gradient-to-r from-[#f78e2c]/10 to-transparent border-[#f78e2c]/40' : 'bg-white/5 border-white/10 hover:border-white/30 hover:bg-white/10'}`}
+                                              className={`cursor-pointer relative flex items-center gap-4 p-4 rounded-xl border transition-all duration-300 group/item overflow-hidden ${event.special ? 'bg-gradient-to-r from-brand-orange/10 to-transparent border-brand-orange/40' : 'bg-white/5 border-white/10 hover:border-white/30 hover:bg-white/10'}`}
                                            >
                                               {/* Date Box */}
-                                              <div className="flex flex-col items-center justify-center w-16 h-16 rounded-lg bg-black/40 border border-white/10 shrink-0 backdrop-blur-sm group-hover/item:border-[#f78e2c]/50 transition-colors">
+                                              <div className="flex flex-col items-center justify-center w-16 h-16 rounded-lg bg-black/40 border border-white/10 shrink-0 backdrop-blur-sm group-hover/item:border-brand-orange/50 transition-colors">
                                                 <span className="text-[10px] font-bold uppercase tracking-wider text-white/60">{event.date.split(' ')[0]}</span>
                                                 <span className="text-xl font-bold font-mono text-white">{event.date.split(' ')[1].replace(/(st|nd|rd|th)/, '')}</span>
                                               </div>
@@ -1051,21 +1065,21 @@ const App: React.FC = () => {
                                               {/* Info */}
                                               <div className="flex-1 min-w-0 flex flex-col justify-center">
                                                 <div className="flex items-center gap-2 mb-1">
-                                                     {event.special && <span className="text-[10px] bg-[#f78e2c] text-black px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">Special</span>}
+                                                     {event.special && <span className="text-[10px] bg-brand-orange text-black px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">Special</span>}
                                                      {event.note && <span className="text-[10px] bg-white/20 text-white px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">{event.note}</span>}
                                                 </div>
-                                                <h4 className={`text-lg md:text-xl font-heading font-bold uppercase truncate pr-4 ${event.special ? 'text-[#f78e2c]' : 'text-white'}`}>
+                                                <h4 className={`text-lg md:text-xl font-heading font-bold uppercase truncate pr-4 ${event.special ? 'text-brand-orange' : 'text-white'}`}>
                                                   {event.act}
                                                 </h4>
                                                 <div className="flex items-center gap-2 mt-0.5">
-                                                    <span className="text-xs text-gray-400 group-hover/item:text-[#f78e2c] transition-colors uppercase tracking-wider font-medium">
+                                                    <span className="text-xs text-gray-300 group-hover/item:text-brand-orange transition-colors uppercase tracking-wider font-medium">
                                                       {event.genre || 'Live Music'}
                                                     </span>
                                                 </div>
                                               </div>
                                               
                                               {/* Arrow */}
-                                              <div className="px-2 opacity-50 group-hover/item:opacity-100 transition-all -translate-x-2 group-hover/item:translate-x-0 duration-300 text-[#f78e2c]">
+                                              <div className="px-2 opacity-50 group-hover/item:opacity-100 transition-all -translate-x-2 group-hover/item:translate-x-0 duration-300 text-brand-orange">
                                                 <div className="hidden md:flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
                                                     <span>View Info</span> <ChevronRight className="w-5 h-5" />
                                                 </div>
@@ -1078,10 +1092,103 @@ const App: React.FC = () => {
                                   ))}
                                  </div>
                                </>
-                            ) : (
-                              // Default View for other features (Food/Quiz)
+                            ) : selectedFeature.id === 'e2' ? (
+                              // Sunday Roast Menu
                               <div className="pb-24">
-                                <button onClick={handleBooking} className="w-full py-6 rounded-2xl bg-[#f78e2c] text-black font-bold uppercase tracking-widest hover:bg-white transition-colors">Book Experience Now</button>
+                                {/* Menu Header */}
+                                <div className="mb-8 pb-6 border-b border-white/10">
+                                  <p className="text-gray-200 leading-relaxed text-sm md:text-base max-w-3xl">
+                                    <span className="font-bold text-white uppercase tracking-wide">Sunday Roast.</span> A proper Sunday Feast. Slow-roasted meats, giant yorkshire puddings, roast potatoes and seasonal veg. Served all day Sunday until sold out. All of our roasts are served with roast potatoes, bowl of seasonal vegetables, honey roasted parsnips, pigs in blankets, Yorkshire pudding and traditional gravy.
+                                  </p>
+                                </div>
+
+                                {/* Book Button */}
+                                <button 
+                                  onClick={handleBooking} 
+                                  className="w-full py-5 md:py-6 rounded-2xl bg-brand-orange text-black font-bold uppercase tracking-widest hover:bg-white transition-all hover:scale-[1.01] shadow-lg shadow-orange-500/20 text-base md:text-lg mb-8"
+                                >
+                                  Book Experience Now
+                                </button>
+
+                                {/* Menu Items */}
+                                <div className="grid md:grid-cols-2 gap-4 md:gap-6 mb-8">
+                                  {/* Classic Rump Roast */}
+                                  <div className="bg-white/5 border border-white/10 rounded-xl p-5 md:p-6 hover:border-brand-orange/40 hover:bg-white/10 transition-all duration-300 group">
+                                    <div className="flex items-start justify-between mb-2">
+                                      <h4 className="text-lg md:text-xl font-heading font-bold uppercase text-white group-hover:text-brand-orange transition-colors">
+                                        Classic Rump Roast
+                                      </h4>
+                                      <span className="text-xl md:text-2xl font-bold text-brand-orange ml-4 shrink-0">£21.00</span>
+                                    </div>
+                                    <p className="text-gray-400 text-sm md:text-base">With sage and onion stuffing</p>
+                                  </div>
+
+                                  {/* Roast Pork Belly */}
+                                  <div className="bg-white/5 border border-white/10 rounded-xl p-5 md:p-6 hover:border-brand-orange/40 hover:bg-white/10 transition-all duration-300 group">
+                                    <div className="flex items-start justify-between mb-2">
+                                      <h4 className="text-lg md:text-xl font-heading font-bold uppercase text-white group-hover:text-brand-orange transition-colors">
+                                        Roast Pork Belly
+                                      </h4>
+                                      <span className="text-xl md:text-2xl font-bold text-brand-orange ml-4 shrink-0">£19.00</span>
+                                    </div>
+                                    <p className="text-gray-400 text-sm md:text-base">With sage and onion stuffing and crackling</p>
+                                  </div>
+
+                                  {/* Succulent Half Roast Chicken */}
+                                  <div className="bg-white/5 border border-white/10 rounded-xl p-5 md:p-6 hover:border-brand-orange/40 hover:bg-white/10 transition-all duration-300 group">
+                                    <div className="flex items-start justify-between mb-2">
+                                      <h4 className="text-lg md:text-xl font-heading font-bold uppercase text-white group-hover:text-brand-orange transition-colors">
+                                        Succulent Half Roast Chicken
+                                      </h4>
+                                      <span className="text-xl md:text-2xl font-bold text-brand-orange ml-4 shrink-0">£19.00</span>
+                                    </div>
+                                    <p className="text-gray-400 text-sm md:text-base">With sage and onion stuffing</p>
+                                  </div>
+
+                                  {/* Nut Roast */}
+                                  <div className="bg-white/5 border border-white/10 rounded-xl p-5 md:p-6 hover:border-brand-orange/40 hover:bg-white/10 transition-all duration-300 group">
+                                    <div className="flex items-start justify-between mb-2">
+                                      <div className="flex items-center gap-2">
+                                        <h4 className="text-lg md:text-xl font-heading font-bold uppercase text-white group-hover:text-brand-orange transition-colors">
+                                          Nut Roast
+                                        </h4>
+                                        <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded font-bold uppercase tracking-wider border border-green-500/30">V</span>
+                                      </div>
+                                      <span className="text-xl md:text-2xl font-bold text-brand-orange ml-4 shrink-0">£18.00</span>
+                                    </div>
+                                    <p className="text-gray-400 text-sm md:text-base">With traditional vegetarian gravy</p>
+                                  </div>
+
+                                  {/* Sharing Trio - Full Width */}
+                                  <div className="md:col-span-2 bg-gradient-to-r from-brand-orange/10 to-transparent border border-brand-orange/40 rounded-xl p-5 md:p-6 hover:border-brand-orange/60 hover:from-brand-orange/20 transition-all duration-300 group">
+                                    <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-2">
+                                      <h4 className="text-lg md:text-xl font-heading font-bold uppercase text-brand-orange mb-2 md:mb-0">
+                                        Sharing Trio
+                                      </h4>
+                                      <span className="text-xl md:text-2xl font-bold text-brand-orange md:ml-4 shrink-0">£35.00</span>
+                                    </div>
+                                    <p className="text-gray-300 text-sm md:text-base">All three meats with sage & onion stuffing and crackling to share for two</p>
+                                  </div>
+                                </div>
+
+                                {/* Additional Offer */}
+                                <div className="bg-brand-orange/10 border border-brand-orange/30 rounded-xl p-5 md:p-6 mb-8">
+                                  <p className="text-white font-bold uppercase text-sm md:text-base tracking-wider text-center md:text-left">
+                                    Add an additional bowl of pigs in blankets for an extra £5 to any roast
+                                  </p>
+                                </div>
+
+                                {/* Availability Note */}
+                                <div className="text-center md:text-left">
+                                  <p className="text-gray-400 text-xs md:text-sm italic">
+                                    *Available every Sunday from 12pm. Subject to availability.
+                                  </p>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="pb-24">
+                                {/* Default View for other features (Food/Quiz) */}
+                                <button onClick={handleBooking} className="w-full py-6 rounded-2xl bg-brand-orange text-black font-bold uppercase tracking-widest hover:bg-white transition-colors">Book Experience Now</button>
                               </div>
                             )}
                          </motion.div>

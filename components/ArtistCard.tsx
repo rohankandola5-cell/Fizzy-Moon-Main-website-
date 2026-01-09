@@ -18,7 +18,7 @@ interface FeatureCardProps {
 const ArtistCard: React.FC<FeatureCardProps> = ({ artist, onClick }) => {
   return (
     <motion.div
-      className="group relative h-[400px] md:h-[500px] w-full overflow-hidden border-b md:border-r border-white/10 bg-[#15222e] cursor-pointer hover:z-10"
+      className="group relative h-[400px] md:h-[500px] w-full overflow-hidden border-b md:border-r border-white/10 bg-brand-slate-dark cursor-pointer hover:z-10"
       initial="rest"
       whileHover="hover"
       whileTap="hover"
@@ -32,7 +32,7 @@ const ArtistCard: React.FC<FeatureCardProps> = ({ artist, onClick }) => {
         },
         hover: { 
           scale: 1.02,
-          borderColor: "rgba(247, 142, 44, 0.5)", // #f78e2c
+          borderColor: "rgba(247, 142, 44, 0.5)", // brand-orange with opacity
           transition: { duration: 0.3, ease: "easeOut" }
         }
       }}
@@ -47,9 +47,16 @@ const ArtistCard: React.FC<FeatureCardProps> = ({ artist, onClick }) => {
             rest: { scale: 1, opacity: 0.6, filter: 'grayscale(100%)' },
             hover: { scale: 1.1, opacity: 0.9, filter: 'grayscale(0%)' }
           }}
+          onError={(e) => {
+            console.error('ArtistCard image failed to load:', artist.image);
+            console.error('Artist:', artist.name);
+          }}
+          onLoad={() => {
+            console.log('ArtistCard image loaded:', artist.image, artist.name);
+          }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#15222e] via-[#15222e]/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500" />
-        <div className="absolute inset-0 bg-[#f78e2c]/0 group-hover:bg-[#f78e2c]/10 transition-colors duration-500 mix-blend-overlay" />
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-slate-dark via-brand-slate-dark/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500" />
+        <div className="absolute inset-0 bg-brand-orange/0 group-hover:bg-brand-orange/10 transition-colors duration-500" />
       </div>
 
       {/* Overlay Info */}
@@ -64,7 +71,7 @@ const ArtistCard: React.FC<FeatureCardProps> = ({ artist, onClick }) => {
                hover: { opacity: 1, x: 0, y: 0, rotate: 45 }
              }}
              transition={{ duration: 0.4, ease: "backOut" }}
-             className="bg-[#f78e2c] text-black rounded-full p-2 shadow-[0_0_15px_rgba(247,142,44,0.5)]"
+             className="bg-brand-orange text-black rounded-full p-2 shadow-[0_0_15px_rgba(247,142,44,0.5)]"
            >
              <ArrowUpRight className="w-6 h-6" />
            </motion.div>
@@ -87,7 +94,7 @@ const ArtistCard: React.FC<FeatureCardProps> = ({ artist, onClick }) => {
             className="text-sm font-medium uppercase tracking-widest text-gray-400 mt-2"
             variants={{
               rest: { opacity: 0.7, x: 0, color: "#9ca3af" },
-              hover: { opacity: 1, x: 5, color: "#f78e2c" }
+              hover: { opacity: 1, x: 5, color: "rgb(247, 142, 44)" }
             }}
             transition={{ duration: 0.3 }}
           >

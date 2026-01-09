@@ -6,12 +6,20 @@
 
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 const StarField = () => {
+  const [isMounted, setIsMounted] = useState(false);
+  
+  // Only run on client after hydration
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   // Reduced star count for performance
   const stars = useMemo(() => {
+    if (!isMounted) return [];
     return Array.from({ length: 15 }).map((_, i) => ({
       id: i,
       size: Math.random() * 2 + 1,
@@ -21,7 +29,12 @@ const StarField = () => {
       delay: Math.random() * 2,
       opacity: Math.random() * 0.7 + 0.3
     }));
-  }, []);
+  }, [isMounted]);
+
+  // Don't render anything until client-side
+  if (!isMounted) {
+    return <div className="absolute inset-0 z-0 pointer-events-none" />;
+  }
 
   return (
     <div className="absolute inset-0 z-0 pointer-events-none">
@@ -53,7 +66,7 @@ const StarField = () => {
 
 const FluidBackground: React.FC = () => {
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden bg-[#0b1219]">
+    <div className="fixed inset-0 -z-10 overflow-hidden bg-brand-slate-deep">
       <StarField />
       
       {/* 
@@ -77,7 +90,7 @@ const FluidBackground: React.FC = () => {
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay pointer-events-none"></div>
       
       {/* Heavy Vignette for "Dark Mode" feel */}
-      <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#0b1219]/40 to-[#0b1219]/90 pointer-events-none" />
+      <div className="absolute inset-0 bg-radial-gradient from-transparent via-brand-slate-deep/40 to-brand-slate-deep/90 pointer-events-none" />
     </div>
   );
 };

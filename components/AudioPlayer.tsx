@@ -49,12 +49,12 @@ const AudioPlayer: React.FC = () => {
         whileHover={{ scale: 1.05, width: 'auto', paddingRight: '1.5rem' }}
         whileTap={{ scale: 0.95 }}
         initial={{ width: '3rem', paddingRight: 0 }}
-        className={`h-12 md:h-14 min-w-[3rem] md:min-w-[3.5rem] bg-[#15222e]/40 backdrop-blur-md border border-white/10 rounded-full shadow-lg flex items-center justify-center overflow-hidden group transition-all duration-300 ${isPlaying ? 'border-[#f78e2c]/50 shadow-[#f78e2c]/20' : 'hover:border-white/30'}`}
+        className={`h-12 md:h-14 min-w-[3rem] md:min-w-[3.5rem] bg-brand-slate-dark/40 backdrop-blur-md border border-white/10 rounded-full shadow-lg flex items-center justify-center overflow-hidden group transition-all duration-300 ${isPlaying ? 'border-brand-orange/50 shadow-brand-orange/20' : 'hover:border-white/30'}`}
       >
         <div className="flex items-center">
            <div className={`w-12 md:w-14 h-12 md:h-14 flex items-center justify-center shrink-0 relative z-10`}>
              {isPlaying ? (
-               <Volume2 className="w-5 h-5 md:w-6 md:h-6 text-[#f78e2c] animate-pulse" />
+               <Volume2 className="w-5 h-5 md:w-6 md:h-6 text-brand-orange animate-pulse" />
              ) : (
                <VolumeX className="w-5 h-5 md:w-6 md:h-6 text-white/70" />
              )}
@@ -73,7 +73,7 @@ const AudioPlayer: React.FC = () => {
               {[1,2,3,4,5].map(i => (
                  <motion.div
                    key={i}
-                   className="w-1 bg-[#f78e2c] rounded-full"
+                   className="w-1 bg-brand-orange rounded-full"
                    animate={{ height: [8, 24, 12, 32, 8] }}
                    transition={{ 
                      duration: 0.6 + Math.random() * 0.4, 
