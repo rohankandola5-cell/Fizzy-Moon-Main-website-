@@ -70,7 +70,7 @@ const EVENTS: FeatureItem[] = [
     name: 'Sunday Roast', 
     category: 'Weekly Tradition', 
     tag: 'FOOD EVENT', 
-    image: 'https://images.unsplash.com/photo-1606850780554-b55eaefa84cb?q=80&w=1000&auto=format&fit=crop',
+    image: '/images/events/IMG_9614.png',
     description: 'A proper Sunday Feast. Slow-roasted meats, giant yorkshire puddings, roast potatoes and seasonal veg. Served all day Sunday until sold out.'
   },
   { 
@@ -112,6 +112,173 @@ const FOOD_DRINK: FeatureItem[] = [
 
 const ALL_FEATURES = [...EVENTS, ...FOOD_DRINK];
 
+/**
+ * Checks if an event date/time has passed based on UK London timezone
+ * @param monthName - Full month name (e.g., "January", "February")
+ * @param dateStr - Date string (e.g., "Fri 2nd", "Sat 3rd")
+ * @param timeStr - Time string (e.g., "9:00 PM", "8:00 PM - Late")
+ * @returns true if event is in the future, false if it has passed
+ */
+const isEventInFuture = (monthName: string, dateStr: string, timeStr: string): boolean => {
+  try {
+    // Get current date/time in UK London timezone
+    const now = new Date();
+    const londonFormatter = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/London',
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: false
+    });
+    
+    const londonParts = londonFormatter.formatToParts(now);
+    const londonDate: { [key: string]: number } = {};
+    londonParts.forEach(part => {
+      if (part.type !== 'literal') {
+        londonDate[part.type] = parseInt(part.value, 10);
+      }
+    });
+    
+    // Extract day number from date string (e.g., "Fri 2nd" -> 2)
+    const dayMatch = dateStr.match(/(\d+)(st|nd|rd|th)/);
+    if (!dayMatch) return true; // If we can't parse, show it to be safe
+    
+    const day = parseInt(dayMatch[1], 10);
+    
+    // Map month name to month number (1-indexed for comparison)
+    const monthMap: { [key: string]: number } = {
+      'January': 1, 'February': 2, 'March': 3, 'April': 4,
+      'May': 5, 'June': 6, 'July': 7, 'August': 8,
+      'September': 9, 'October': 10, 'November': 11, 'December': 12
+    };
+    
+    const eventMonth = monthMap[monthName];
+    if (eventMonth === undefined) return true; // If month not found, show it to be safe
+    
+    const currentYear = londonDate.year || now.getFullYear();
+    const currentMonth = londonDate.month || (now.getMonth() + 1);
+    const currentDay = londonDate.day || now.getDate();
+    const currentHours = londonDate.hour || now.getHours();
+    const currentMinutes = londonDate.minute || now.getMinutes();
+    
+    // Determine year - assume current year, or next year if month/day has passed
+    let year = currentYear;
+    
+    // If event month is before current month, it's next year
+    if (eventMonth < currentMonth) {
+      year = currentYear + 1;
+    } 
+    // If event month is same but day is before current day, it's PAST (not next year)
+    else if (eventMonth === currentMonth && day < currentDay) {
+      return false; // Event is in the past, filter it out
+    } 
+    // If event month is same, day is same, check time
+    else if (eventMonth === currentMonth && day === currentDay) {
+      // Parse time string (e.g., "9:00 PM" or "8:00 PM - Late")
+      const timeMatch = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+      if (!timeMatch) {
+        // If no time found, assume event is at end of day (23:59)
+        // If it's the same day and we're past 23:59, it's past
+        if (currentHours >= 23 && currentMinutes >= 59) {
+          return false;
+        }
+        return true;
+      }
+      
+      let eventHours = parseInt(timeMatch[1], 10);
+      const eventMinutes = parseInt(timeMatch[2], 10);
+      const ampm = timeMatch[3].toUpperCase();
+      
+      // Convert to 24-hour format
+      if (ampm === 'PM' && eventHours !== 12) {
+        eventHours += 12;
+      } else if (ampm === 'AM' && eventHours === 12) {
+        eventHours = 0;
+      }
+      
+      // Compare times on the same day
+      if (eventHours < currentHours || (eventHours === currentHours && eventMinutes <= currentMinutes)) {
+        return false; // Event time has passed
+      }
+      return true; // Event time is in the future today
+    }
+    
+    // Parse time string (e.g., "9:00 PM" or "8:00 PM - Late")
+    const timeMatch = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (!timeMatch) {
+      // If no time found, assume event is at end of day (23:59)
+      // Compare date components directly
+      if (year > currentYear) return true;
+      if (year < currentYear) return false;
+      if (eventMonth > currentMonth) return true;
+      if (eventMonth < currentMonth) return false;
+      if (day > currentDay) return true;
+      if (day < currentDay) return false;
+      // Same day - if current time is past 23:59, event has passed
+      return !(currentHours >= 23 && currentMinutes >= 59);
+    }
+    
+    let eventHours = parseInt(timeMatch[1], 10);
+    const eventMinutes = parseInt(timeMatch[2], 10);
+    const ampm = timeMatch[3].toUpperCase();
+    
+    // Convert to 24-hour format
+    if (ampm === 'PM' && eventHours !== 12) {
+      eventHours += 12;
+    } else if (ampm === 'AM' && eventHours === 12) {
+      eventHours = 0;
+    }
+    
+    // Compare date/time components directly (all in London timezone)
+    if (year > currentYear) return true;
+    if (year < currentYear) return false;
+    if (eventMonth > currentMonth) return true;
+    if (eventMonth < currentMonth) return false;
+    if (day > currentDay) return true;
+    if (day < currentDay) return false;
+    // Same day - compare time
+    if (eventHours > currentHours) return true;
+    if (eventHours < currentHours) return false;
+    // Same hour - compare minutes
+    return eventMinutes > currentMinutes;
+  } catch (error) {
+    // If parsing fails, show the event to be safe
+    console.error('Error parsing event date:', error);
+    return true;
+  }
+};
+
+/**
+ * Filters out past events from the music schedule
+ */
+const getFilteredMusicSchedule = () => {
+  return MUSIC_SCHEDULE.map(month => ({
+    ...month,
+    events: month.events.filter(event => 
+      isEventInFuture(month.month, event.date, event.time)
+    )
+  })).filter(month => month.events.length > 0); // Remove months with no events
+};
+
+// Helper function to get featured/upcoming event from MUSIC_SCHEDULE for promotional modal
+const getFeaturedEventFromSchedule = () => {
+  const filteredSchedule = getFilteredMusicSchedule();
+  // Try to find a featured/highlighted event first
+  for (const month of filteredSchedule) {
+    const featuredEvent = month.events.find(event => event.highlight || event.special);
+    if (featuredEvent) {
+      return featuredEvent;
+    }
+  }
+  // Fallback to first event in first month
+  if (filteredSchedule.length > 0 && filteredSchedule[0].events.length > 0) {
+    return filteredSchedule[0].events[0];
+  }
+  return null;
+};
+
 const App: React.FC = () => {
   const { scrollYProgress } = useScroll();
   // Gentler parallax - reduced from -100 to -30 for smoother feel
@@ -128,12 +295,21 @@ const App: React.FC = () => {
   const [showLiveMusicModal, setShowLiveMusicModal] = useState(false);
   
   const modalScrollRef = useRef<HTMLDivElement>(null);
+  const promoModalScrollRef = useRef<HTMLDivElement>(null);
   const [activeMonth, setActiveMonth] = useState(0);
+  const [promoActiveMonth, setPromoActiveMonth] = useState(0);
   const [isAutoScrolling, setIsAutoScrolling] = useState(false);
+  const [isPromoAutoScrolling, setIsPromoAutoScrolling] = useState(false);
   
   const [scrolled, setScrolled] = useState(false);
   const [currentHeroImage, setCurrentHeroImage] = useState(0);
   const [isPageReady, setIsPageReady] = useState(false);
+  
+  // Get filtered music schedule (past events removed)
+  const filteredMusicSchedule = getFilteredMusicSchedule();
+  
+  // Get featured event for promotional modal
+  const featuredEvent = getFeaturedEventFromSchedule();
 
   // Handle page readiness and smooth initial load
   useEffect(() => {
@@ -293,6 +469,16 @@ const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedFeature, selectedEvent, showSundayRoastModal, showLiveMusicModal]);
 
+  // Reset promo modal active month when it opens
+  useEffect(() => {
+    if (showLiveMusicModal) {
+      setPromoActiveMonth(0);
+      if (promoModalScrollRef.current) {
+        promoModalScrollRef.current.scrollTo({ top: 0, behavior: 'auto' });
+      }
+    }
+  }, [showLiveMusicModal]);
+
   // Reset drill-down when feature changes
   useEffect(() => {
     setSelectedEvent(null);
@@ -338,11 +524,31 @@ const App: React.FC = () => {
     }
   };
 
+  const scrollToMonthPromo = (index: number) => {
+    if (promoModalScrollRef.current) {
+      setIsPromoAutoScrolling(true);
+      const element = document.getElementById(`promo-month-section-${index}`);
+      if (element) {
+        const headerOffset = 90; 
+        const top = element.offsetTop - headerOffset;
+        promoModalScrollRef.current.scrollTo({
+          top: Math.max(0, top),
+          behavior: 'smooth'
+        });
+        setPromoActiveMonth(index);
+        
+        setTimeout(() => {
+           setIsPromoAutoScrolling(false);
+        }, 800);
+      }
+    }
+  };
+
   const handleModalScroll = () => {
     if (isAutoScrolling) return;
 
     if (modalScrollRef.current) {
-       const sections = MUSIC_SCHEDULE.map((_, i) => document.getElementById(`month-section-${i}`));
+       const sections = filteredMusicSchedule.map((_, i) => document.getElementById(`month-section-${i}`));
        const scrollPosition = modalScrollRef.current.scrollTop;
        const triggerPoint = scrollPosition + 120;
   
@@ -353,6 +559,24 @@ const App: React.FC = () => {
           }
        });
        setActiveMonth(currentIndex);
+    }
+  };
+
+  const handlePromoModalScroll = () => {
+    if (isPromoAutoScrolling) return;
+
+    if (promoModalScrollRef.current) {
+       const sections = filteredMusicSchedule.map((_, i) => document.getElementById(`promo-month-section-${i}`));
+       const scrollPosition = promoModalScrollRef.current.scrollTop;
+       const triggerPoint = scrollPosition + 120;
+  
+       let currentIndex = 0;
+       sections.forEach((section, index) => {
+          if (section && section.offsetTop <= triggerPoint) {
+             currentIndex = index;
+          }
+       });
+       setPromoActiveMonth(currentIndex);
     }
   };
 
@@ -846,7 +1070,7 @@ const App: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="w-full h-[220px] md:h-[280px] relative shrink-0 group/image"
+                        className="w-full h-[180px] md:h-[220px] relative shrink-0 group/image"
                     >
                         <img 
                           src={selectedFeature.image} 
@@ -854,7 +1078,13 @@ const App: React.FC = () => {
                           className="absolute inset-0 w-full h-full object-cover"
                         />
                         
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#15222e] via-[#15222e]/40 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#15222e]/95 via-[#15222e]/20 to-transparent" />
+
+                        {/* MUSIC Tag - Top Left */}
+                        <div className="absolute top-4 left-4 md:top-6 md:left-6 z-20 flex items-center gap-2 text-[#f78e2c]">
+                          <Calendar className="w-5 h-5 md:w-6 md:h-6" />
+                          <span className="font-mono text-sm md:text-base tracking-widest uppercase font-bold">{selectedFeature.tag}</span>
+                        </div>
 
                         {/* Navigation Buttons for Main Features */}
                         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full flex justify-between px-4 pointer-events-none">
@@ -878,11 +1108,7 @@ const App: React.FC = () => {
                            <button onClick={(e) => { e.stopPropagation(); navigateFeature('next'); }} className="p-2 rounded-full bg-black/50 border border-white/10 text-white"><ChevronRight className="w-5 h-5" /></button>
                         </div>
 
-                        <div className="absolute bottom-0 left-0 w-full p-6 md:p-8 flex flex-col justify-end items-start z-10">
-                           <div className="flex items-center gap-3 text-[#f78e2c] mb-2">
-                             <Calendar className="w-4 h-4" />
-                             <span className="font-mono text-xs md:text-sm tracking-widest uppercase">{selectedFeature.tag}</span>
-                           </div>
+                        <div className="absolute bottom-0 left-0 w-full p-6 md:p-8 flex flex-col justify-end items-start z-10 pb-4 md:pb-6">
                            <h3 className="text-3xl md:text-5xl font-heading font-black uppercase leading-none text-white mb-1 tracking-tighter shadow-black drop-shadow-lg">
                               {selectedFeature.name}
                            </h3>
@@ -967,16 +1193,12 @@ const App: React.FC = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="max-w-4xl mx-auto p-5 md:p-8"
+                            className="max-w-4xl mx-auto p-5 md:p-8 pt-3 md:pt-4"
                         >
-                            <p className="text-gray-300 leading-relaxed text-sm md:text-base font-light mb-8 max-w-2xl">
-                               {selectedFeature.description}
-                            </p>
-
                             {selectedFeature.id === 'e1' ? (
                                <>
                                  {/* Month Navigation */}
-                                 <div className="sticky top-0 z-30 py-2 mb-6 -mx-5 px-5 md:-mx-8 md:px-8 bg-[#15222e]/95 backdrop-blur-sm border-b border-white/5 flex justify-start overflow-x-auto no-scrollbar">
+                                 <div className="sticky top-0 z-30 py-2 mb-4 -mx-5 px-5 md:-mx-8 md:px-8 bg-[#15222e]/95 backdrop-blur-sm border-b border-white/5 flex justify-start overflow-x-auto no-scrollbar">
                                      <div className="relative flex items-center bg-white/5 backdrop-blur-xl border border-white/10 rounded-full p-1 shadow-2xl">
                                          {MUSIC_SCHEDULE.map((month, idx) => {
                                              const isActive = activeMonth === idx;
@@ -1002,7 +1224,7 @@ const App: React.FC = () => {
 
                                  {/* Calendar Events List */}
                                  <div className="space-y-8 pb-24">
-                                  {MUSIC_SCHEDULE.map((month, idx) => (
+                                  {filteredMusicSchedule.map((month, idx) => (
                                      <div key={idx} id={`month-section-${idx}`} className="relative scroll-mt-32">
                                        <div className="flex items-center gap-4 mb-6">
                                          <h5 className="text-4xl md:text-5xl font-heading font-black uppercase text-white/5 tracking-tighter">
@@ -1102,19 +1324,31 @@ const App: React.FC = () => {
               className="fixed inset-0 z-[71] flex items-center justify-center p-4 md:p-8 pointer-events-none"
             >
               <div 
-                className="relative max-w-4xl w-full h-[90vh] md:h-[85vh] pointer-events-auto rounded-2xl md:rounded-3xl overflow-hidden border border-white/10 shadow-2xl group"
+                className="relative max-w-5xl w-full h-[95vh] md:h-[90vh] pointer-events-auto rounded-2xl md:rounded-3xl overflow-hidden border-4 border-[#1e3a5f] shadow-2xl group"
                 style={{ 
-                  backgroundColor: '#0b1219'
+                  backgroundColor: '#f78e2c'
                 }}
               >
                 {/* Close Button */}
                 <button
                   onClick={() => setShowSundayRoastModal(false)}
-                  className="absolute top-4 right-4 z-50 p-2 rounded-full bg-black/50 text-white hover:bg-white hover:text-black transition-colors border border-white/10 backdrop-blur-md"
+                  className="absolute top-3 right-3 z-50 p-2 rounded-full bg-black/70 text-white hover:bg-white hover:text-black transition-colors border border-white/20 backdrop-blur-md"
                   aria-label="Close"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
+
+                {/* 25% Off Gift Badge - Top Right Corner */}
+                <div className="absolute top-0 right-0 z-40 transform rotate-12 origin-top-right">
+                  <div className="bg-gradient-to-br from-yellow-300 to-yellow-500 border-2 border-black shadow-2xl rounded-lg p-2 md:p-3 relative">
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-black rounded-full"></div>
+                    <div className="text-center">
+                      <div className="text-lg md:text-2xl font-black text-black leading-none">25%</div>
+                      <div className="text-[8px] md:text-[10px] font-bold text-black uppercase tracking-tight">OFF</div>
+                      <div className="text-[7px] md:text-[9px] text-black/90 font-semibold mt-0.5">Online Only</div>
+                    </div>
+                  </div>
+                </div>
 
                 {/* Navigation Arrows */}
                 <button
@@ -1122,74 +1356,121 @@ const App: React.FC = () => {
                     e.stopPropagation();
                     setShowSundayRoastModal(false);
                   }}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 z-50 p-3 rounded-full bg-black/50 text-white hover:bg-white hover:text-black transition-colors border border-white/10 backdrop-blur-md opacity-0 group-hover:opacity-100 md:opacity-100"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 z-50 p-2 md:p-3 rounded-full bg-black/70 text-white hover:bg-white hover:text-black transition-colors border border-white/20 backdrop-blur-md opacity-0 group-hover:opacity-100 md:opacity-100"
                   aria-label="Previous"
                 >
-                  <ChevronLeft className="w-5 h-5" />
+                  <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowSundayRoastModal(false);
                   }}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 z-50 p-3 rounded-full bg-black/50 text-white hover:bg-white hover:text-black transition-colors border border-white/10 backdrop-blur-md opacity-0 group-hover:opacity-100 md:opacity-100"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 z-50 p-2 md:p-3 rounded-full bg-black/70 text-white hover:bg-white hover:text-black transition-colors border border-white/20 backdrop-blur-md opacity-0 group-hover:opacity-100 md:opacity-100"
                   aria-label="Next"
                 >
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
 
-                {/* Promotional Image Background */}
-                <div className="relative w-full h-full">
-                  <img
-                    src="/images/events/IMG_9614.jpg"
-                    alt="Sunday Roast"
-                    className="w-full h-full object-cover"
-                  />
-                  
-                  {/* Dark Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/80 to-black/60" />
-                  
-                  {/* Content Overlay */}
-                  <div className="absolute inset-0 flex flex-col justify-between p-6 md:p-12">
-                    {/* Top Section - Tag and Title */}
-                    <div className="flex flex-col items-start">
-                      {/* FOOD EVENT Tag */}
-                      <div className="flex items-center gap-2 mb-4">
-                        <Utensils className="w-4 h-4 text-white" />
-                        <span className="text-white text-xs md:text-sm font-bold tracking-[0.2em] uppercase">
-                          FOOD EVENT
-                        </span>
+                {/* Content Container */}
+                <div className="relative w-full h-full overflow-y-auto">
+                  <div className="p-6 md:p-8 lg:p-10">
+                    {/* Title Section */}
+                    <div className="mb-4 md:mb-6">
+                      <div className="bg-black px-5 py-3 md:px-8 md:py-4 inline-block">
+                        <h2 className="text-3xl md:text-5xl lg:text-6xl font-heading font-bold uppercase text-white leading-tight">
+                          SUNDAY ROAST
+                        </h2>
+                      </div>
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-black text-sm md:text-base font-medium mb-6 md:mb-8 leading-relaxed max-w-3xl">
+                      All of our roasts are served with roast potatoes, bowl of seasonal vegetables, honey roasted parsnips, pigs in blankets Yorkshire pudding and traditional gravy
+                    </p>
+
+                    {/* Menu Items Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mb-6 md:mb-8">
+                      {/* Classic Rump Roast */}
+                      <div className="bg-white rounded-lg p-4 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow">
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="text-lg md:text-xl font-bold text-black uppercase leading-tight pr-3 flex-1">
+                            CLASSIC RUMP ROAST
+                          </h3>
+                          <span className="text-xl md:text-2xl font-black text-black whitespace-nowrap">£21.00</span>
+                        </div>
+                        <p className="text-sm md:text-base text-black/70">With sage and onion stuffing</p>
                       </div>
 
-                      {/* Title */}
-                      <h2 className="text-4xl md:text-7xl font-heading font-bold uppercase text-white leading-none mb-3">
-                        SUNDAY ROAST
-                      </h2>
+                      {/* Roast Pork Belly */}
+                      <div className="bg-white rounded-lg p-4 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow">
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="text-lg md:text-xl font-bold text-black uppercase leading-tight pr-3 flex-1">
+                            ROAST PORK BELLY
+                          </h3>
+                          <span className="text-xl md:text-2xl font-black text-black whitespace-nowrap">£19.00</span>
+                        </div>
+                        <p className="text-sm md:text-base text-black/70">With sage and onion stuffing and crackling</p>
+                      </div>
 
-                      {/* Subtitle */}
-                      <p className="text-[#f78e2c] text-lg md:text-2xl font-bold uppercase tracking-wider">
-                        WEEKLY TRADITION
+                      {/* Succulent Half Roast Chicken */}
+                      <div className="bg-white rounded-lg p-4 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow">
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="text-lg md:text-xl font-bold text-black uppercase leading-tight pr-3 flex-1">
+                            SUCCULENT HALF ROAST CHICKEN
+                          </h3>
+                          <span className="text-xl md:text-2xl font-black text-black whitespace-nowrap">£19.00</span>
+                        </div>
+                        <p className="text-sm md:text-base text-black/70">With sage and onion stuffing</p>
+                      </div>
+
+                      {/* Nut Roast */}
+                      <div className="bg-white rounded-lg p-4 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow">
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="text-lg md:text-xl font-bold text-black uppercase leading-tight pr-3 flex-1">
+                            NUT ROAST <span className="text-sm font-normal">(V)</span>
+                          </h3>
+                          <span className="text-xl md:text-2xl font-black text-black whitespace-nowrap">£18.00</span>
+                        </div>
+                        <p className="text-sm md:text-base text-black/70">With traditional vegetarian gravy</p>
+                      </div>
+
+                      {/* Sharing Trio - Full Width */}
+                      <div className="bg-white rounded-lg p-4 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow md:col-span-2">
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="text-lg md:text-xl font-bold text-black uppercase leading-tight pr-3 flex-1">
+                            SHARING TRIO
+                          </h3>
+                          <span className="text-xl md:text-2xl font-black text-black whitespace-nowrap">£35.00</span>
+                        </div>
+                        <p className="text-sm md:text-base text-black/70">All three meats with sage & onion stuffing and crackling to share for two</p>
+                      </div>
+                    </div>
+
+                    {/* Extra Option - Subtle */}
+                    <div className="mb-6 md:mb-8 text-center">
+                      <p className="text-xs md:text-sm text-black/80 font-medium italic">
+                        Add an additional bowl of pigs in blankets for an extra £5 to any roast
                       </p>
                     </div>
 
-                    {/* Bottom Section - Description and CTA */}
-                    <div className="flex flex-col gap-6">
-                      {/* Description */}
-                      <p className="text-white text-base md:text-lg leading-relaxed max-w-2xl font-light">
-                        A proper Sunday Feast. Slow-roasted meats, giant yorkshire puddings, roast potatoes and seasonal veg. Served all day Sunday until sold out.
-                      </p>
-
-                      {/* CTA Button */}
+                    {/* Book Now Button */}
+                    <div className="mb-4">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleBooking();
                         }}
-                        className="w-full md:w-auto px-8 py-4 bg-[#f78e2c] text-black font-bold font-heading uppercase tracking-widest text-sm md:text-base rounded-xl hover:bg-white transition-all duration-300 shadow-[0_0_30px_rgba(247,142,44,0.4)]"
+                        className="w-full px-8 py-4 md:py-5 bg-black text-white font-bold font-heading uppercase tracking-widest text-base md:text-lg rounded-lg hover:bg-white hover:text-black transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-[1.02]"
                       >
-                        BOOK EXPERIENCE NOW
+                        BOOK NOW
                       </button>
                     </div>
+
+                    {/* Disclaimer */}
+                    <p className="text-xs md:text-sm text-black/60 text-center font-medium">
+                      *Available every Sunday from 12pm. Subject to availability.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -1221,10 +1502,7 @@ const App: React.FC = () => {
               className="fixed inset-0 z-[71] flex items-center justify-center p-4 md:p-8 pointer-events-none"
             >
               <div 
-                className="relative max-w-4xl w-full h-[90vh] md:h-[85vh] pointer-events-auto rounded-2xl md:rounded-3xl overflow-hidden border border-white/10 shadow-2xl group"
-                style={{ 
-                  backgroundColor: '#0b1219'
-                }}
+                className="relative w-full max-w-4xl bg-[#15222e] border-t md:border border-white/10 overflow-hidden flex flex-col shadow-2xl shadow-[#f78e2c]/10 group/modal h-[90dvh] md:h-[85vh] rounded-t-3xl md:rounded-3xl pointer-events-auto"
               >
                 {/* Close Button */}
                 <button
@@ -1232,82 +1510,140 @@ const App: React.FC = () => {
                   className="absolute top-4 right-4 z-50 p-2 rounded-full bg-black/50 text-white hover:bg-white hover:text-black transition-colors border border-white/10 backdrop-blur-md"
                   aria-label="Close"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-6 h-6" />
                 </button>
 
-                {/* Navigation Arrows */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowLiveMusicModal(false);
-                  }}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 z-50 p-3 rounded-full bg-black/50 text-white hover:bg-white hover:text-black transition-colors border border-white/10 backdrop-blur-md opacity-0 group-hover:opacity-100 md:opacity-100"
-                  aria-label="Previous"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowLiveMusicModal(false);
-                  }}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 z-50 p-3 rounded-full bg-black/50 text-white hover:bg-white hover:text-black transition-colors border border-white/10 backdrop-blur-md opacity-0 group-hover:opacity-100 md:opacity-100"
-                  aria-label="Next"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-
-                {/* Promotional Image Background */}
-                <div className="relative w-full h-full">
-                  <img
-                    src={EVENTS[0].image}
-                    alt="Live Music Calendar"
-                    className="w-full h-full object-cover"
+                {/* Top Image Section - Hero */}
+                <div className="w-full h-[180px] md:h-[220px] relative shrink-0 group/image">
+                  <img 
+                    src={EVENTS[0].image} 
+                    alt="Live Music Calendar" 
+                    className="absolute inset-0 w-full h-full object-cover"
                   />
                   
-                  {/* Dark Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/80 to-black/60" />
-                  
-                  {/* Content Overlay */}
-                  <div className="absolute inset-0 flex flex-col justify-between p-6 md:p-12">
-                    {/* Top Section - Tag and Title */}
-                    <div className="flex flex-col items-start">
-                      {/* MUSIC Tag */}
-                      <div className="flex items-center gap-2 mb-4">
-                        <Music className="w-4 h-4 text-white" />
-                        <span className="text-white text-xs md:text-sm font-bold tracking-[0.2em] uppercase">
-                          MUSIC
-                        </span>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#15222e]/95 via-[#15222e]/20 to-transparent" />
+
+                  {/* MUSIC Tag - Top Left */}
+                  <div className="absolute top-4 left-4 md:top-6 md:left-6 z-20 flex items-center gap-2 text-[#f78e2c]">
+                    <Calendar className="w-5 h-5 md:w-6 md:h-6" />
+                    <span className="font-mono text-sm md:text-base tracking-widest uppercase font-bold">{EVENTS[0].tag}</span>
+                  </div>
+
+                  <div className="absolute bottom-0 left-0 w-full p-6 md:p-8 flex flex-col justify-end items-start z-10 pb-4 md:pb-6">
+                    <h3 className="text-3xl md:text-5xl font-heading font-black uppercase leading-none text-white mb-1 tracking-tighter shadow-black drop-shadow-lg">
+                      {EVENTS[0].name.toUpperCase()}
+                    </h3>
+                    <p className="text-base md:text-xl text-amber-500 font-medium tracking-widest uppercase">
+                      {EVENTS[0].category}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Main Scrollable Content Area */}
+                <div 
+                  ref={promoModalScrollRef}
+                  onScroll={handlePromoModalScroll}
+                  className="flex-1 overflow-y-auto bg-[#15222e] relative"
+                  style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.2) transparent' }}
+                >
+                  <div className="max-w-4xl mx-auto p-5 md:p-8 pt-3 md:pt-4">
+                    {/* Month Navigation */}
+                    <div className="sticky top-0 z-30 py-2 mb-4 -mx-5 px-5 md:-mx-8 md:px-8 bg-[#15222e]/95 backdrop-blur-sm border-b border-white/5 flex justify-start overflow-x-auto no-scrollbar">
+                      <div className="relative flex items-center bg-white/5 backdrop-blur-xl border border-white/10 rounded-full p-1 shadow-2xl">
+                        {filteredMusicSchedule.map((month, idx) => {
+                          const isActive = promoActiveMonth === idx;
+                          return (
+                            <button
+                              key={idx}
+                              onClick={() => scrollToMonthPromo(idx)}
+                              className={`relative px-3 py-1.5 md:px-4 md:py-2 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest transition-colors duration-300 z-10 shrink-0 ${isActive ? 'text-black' : 'text-gray-400 hover:text-white'}`}
+                            >
+                              {isActive && (
+                                <motion.div
+                                  layoutId="activePillPromo"
+                                  className="absolute inset-0 bg-[#f78e2c] rounded-full -z-10"
+                                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                />
+                              )}
+                              {month.month}
+                            </button>
+                          );
+                        })}
                       </div>
-
-                      {/* Title */}
-                      <h2 className="text-4xl md:text-7xl font-heading font-bold uppercase text-white leading-none mb-3">
-                        LIVE MUSIC CALENDAR
-                      </h2>
-
-                      {/* Subtitle */}
-                      <p className="text-[#f78e2c] text-lg md:text-2xl font-bold uppercase tracking-wider">
-                        {EVENTS[0].category}
-                      </p>
                     </div>
 
-                    {/* Bottom Section - Description and CTA */}
-                    <div className="flex flex-col gap-6">
-                      {/* Description */}
-                      <p className="text-white text-base md:text-lg leading-relaxed max-w-2xl font-light">
-                        {EVENTS[0].description}
-                      </p>
+                    {/* Calendar Events List */}
+                    <div className="space-y-8 pb-24">
+                      {filteredMusicSchedule.map((month, idx) => (
+                        <div key={idx} id={`promo-month-section-${idx}`} className="relative scroll-mt-32">
+                          <div className="flex items-center gap-4 mb-6">
+                            <h5 className="text-4xl md:text-5xl font-heading font-black uppercase text-white/5 tracking-tighter">
+                              {month.month}
+                            </h5>
+                            <div className="h-px flex-1 bg-gradient-to-r from-[#f78e2c]/30 to-transparent" />
+                          </div>
 
-                      {/* CTA Button */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleBooking();
-                        }}
-                        className="w-full md:w-auto px-8 py-4 bg-[#f78e2c] text-black font-bold font-heading uppercase tracking-widest text-sm md:text-base rounded-xl hover:bg-white transition-all duration-300 shadow-[0_0_30px_rgba(247,142,44,0.4)]"
-                      >
-                        BOOK EXPERIENCE NOW
-                      </button>
+                          <div className="grid gap-3">
+                            {month.events.map((event, i) => (
+                              <div 
+                                key={i} 
+                                onClick={() => {
+                                  // Close promo modal and open main feature modal with event selected
+                                  setShowLiveMusicModal(false);
+                                  // Use setTimeout to ensure modal state updates properly
+                                  setTimeout(() => {
+                                    setSelectedFeature(EVENTS[0]);
+                                    setTimeout(() => {
+                                      setSelectedEvent(event);
+                                    }, 100);
+                                  }, 100);
+                                }}
+                                className={`cursor-pointer relative flex items-center gap-4 p-4 rounded-xl border transition-all duration-300 group/item overflow-hidden ${event.special ? 'bg-gradient-to-r from-[#f78e2c]/10 to-transparent border-[#f78e2c]/40' : 'bg-white/5 border-white/10 hover:border-white/30 hover:bg-white/10'}`}
+                              >
+                                {/* Date Box */}
+                                <div className="flex flex-col items-center justify-center w-16 h-16 rounded-lg bg-black/40 border border-white/10 shrink-0 backdrop-blur-sm group-hover/item:border-[#f78e2c]/50 transition-colors">
+                                  <span className="text-[10px] font-bold uppercase tracking-wider text-white/60">{event.date.split(' ')[0]}</span>
+                                  <span className="text-xl font-bold font-mono text-white">{event.date.split(' ')[1].replace(/(st|nd|rd|th)/, '')}</span>
+                                </div>
+                                
+                                {/* Thumbnail Image */}
+                                <div className="w-16 h-16 md:w-20 md:h-20 shrink-0 rounded-full md:rounded-lg overflow-hidden border border-white/10 relative shadow-lg">
+                                  <img 
+                                    src={event.image} 
+                                    alt={event.act} 
+                                    className="w-full h-full object-cover transform group-hover/item:scale-110 transition-transform duration-500"
+                                  />
+                                  <div className="absolute inset-0 bg-black/20 group-hover/item:bg-transparent transition-colors" />
+                                </div>
+                                
+                                {/* Info */}
+                                <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    {event.special && <span className="text-[10px] bg-[#f78e2c] text-black px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">Special</span>}
+                                    {event.note && <span className="text-[10px] bg-white/20 text-white px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">{event.note}</span>}
+                                  </div>
+                                  <h4 className={`text-lg md:text-xl font-heading font-bold uppercase truncate pr-4 ${event.special ? 'text-[#f78e2c]' : 'text-white'}`}>
+                                    {event.act}
+                                  </h4>
+                                  <div className="flex items-center gap-2 mt-0.5">
+                                    <span className="text-xs text-gray-400 group-hover/item:text-[#f78e2c] transition-colors uppercase tracking-wider font-medium">
+                                      {event.genre || 'Live Music'}
+                                    </span>
+                                  </div>
+                                </div>
+                                
+                                {/* Arrow */}
+                                <div className="px-2 opacity-50 group-hover/item:opacity-100 transition-all -translate-x-2 group-hover/item:translate-x-0 duration-300 text-[#f78e2c]">
+                                  <div className="hidden md:flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
+                                    <span>View Info</span> <ChevronRight className="w-5 h-5" />
+                                  </div>
+                                  <ChevronRight className="w-6 h-6 md:hidden" />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
