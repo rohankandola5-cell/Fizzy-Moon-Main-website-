@@ -55,18 +55,18 @@ const FAQAccordion: React.FC = () => {
         return (
           <div 
             key={index} 
-            className={`border rounded-2xl transition-all duration-300 ${isOpen ? 'bg-white/10 border-brand-orange/50' : 'bg-white/5 border-white/10 hover:border-white/20'}`}
+            className={`border rounded-2xl transition-all duration-300 ${isOpen ? 'bg-white/10 border-[#f78e2c]/50' : 'bg-white/5 border-white/10 hover:border-white/20'}`}
           >
             <button
               onClick={() => toggleIndex(index)}
               aria-expanded={isOpen}
               aria-controls={`faq-answer-${index}`}
-              className="w-full flex items-center justify-between p-6 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange rounded-2xl group"
+              className="w-full flex items-center justify-between p-6 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f78e2c] rounded-2xl group"
             >
-              <span className={`text-lg md:text-xl font-bold font-heading uppercase tracking-wide transition-colors ${isOpen ? 'text-brand-orange' : 'text-white group-hover:text-white/90'}`}>
+              <span className={`text-lg md:text-xl font-bold font-heading uppercase tracking-wide transition-colors ${isOpen ? 'text-[#f78e2c]' : 'text-white group-hover:text-white/90'}`}>
                 {faq.question}
               </span>
-              <span className={`p-2 rounded-full border transition-all ${isOpen ? 'bg-brand-orange border-brand-orange text-black rotate-180' : 'border-white/20 text-white group-hover:border-white/40'}`}>
+              <span className={`p-2 rounded-full border transition-all ${isOpen ? 'bg-[#f78e2c] border-[#f78e2c] text-black rotate-180' : 'border-white/20 text-white group-hover:border-white/40'}`}>
                 {isOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
               </span>
             </button>

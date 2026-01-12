@@ -10,7 +10,7 @@
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: thin;  /* Firefox */
     scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-    background-color: #0b1219; /* Deep Slate Blue - matches brand.slate.deep */
+    background-color: #0b1219; /* Deep Slate Blue */
   }
   
   /* Custom Scrollbar for Webkit (Chrome, Safari, etc) */
@@ -29,12 +29,12 @@
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    background: #f78e2c; /* Brand orange - matches brand.orange */
+    background: #f78e2c;
   }
   
   body {
     font-family: 'Space Grotesk', sans-serif;
-    background-color: #0b1219; /* Deep Slate Blue - matches brand.slate.deep */
+    background-color: #0b1219; /* Deep Slate Blue */
     color: #fff;
     overflow-x: hidden;
   }
@@ -53,8 +53,8 @@
   }
   
   .selection\:bg-\[#f78e2c\] *::selection {
-    background-color: #f78e2c; /* Brand orange - matches brand.orange */
-    color: #000;
+    background-color: #f78e2c;
+    color: black;
   }
 }
 

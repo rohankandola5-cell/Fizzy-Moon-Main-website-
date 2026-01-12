@@ -147,7 +147,7 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete, assetsLoaded }) => {
     // Adjusted to match the new Orange (#f78e2c) and lighter tones
     const bubbleColors = [
       'bg-white/60 shadow-[0_0_4px_rgba(255,255,255,0.8)]', // Bright white sparkle
-      'bg-brand-orange/40 shadow-[0_0_6px_rgba(247,142,44,0.6)]', // Vibrant Orange
+      'bg-[#f78e2c]/40 shadow-[0_0_6px_rgba(247,142,44,0.6)]', // Vibrant Orange
       'bg-[#ffb066]/30 shadow-[0_0_5px_rgba(255,176,102,0.5)]', // Lighter Orange
     ];
 

@@ -7,8 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "normalize:images": "node scripts/normalize-images.js"
+    "lint": "next lint"
   },
   "dependencies": {
     "react": "^19.2.0",
@@ -21,7 +20,6 @@
     "@types/node": "^22.14.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "typescript": "~5.8.2",
-    "sharp": "^0.33.0"
+    "typescript": "~5.8.2"
   }
 }
