@@ -124,6 +124,8 @@ const App: React.FC = () => {
   // Modal States
   const [selectedFeature, setSelectedFeature] = useState<FeatureItem | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<any | null>(null); // For Drill-down view
+  const [showSundayRoastModal, setShowSundayRoastModal] = useState(false);
+  const [showLiveMusicModal, setShowLiveMusicModal] = useState(false);
   
   const modalScrollRef = useRef<HTMLDivElement>(null);
   const [activeMonth, setActiveMonth] = useState(0);
@@ -277,17 +279,19 @@ const App: React.FC = () => {
   // Handle keyboard navigation for modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!selectedFeature) return;
-      if (e.key === 'ArrowLeft' && !selectedEvent) navigateFeature('prev');
-      if (e.key === 'ArrowRight' && !selectedEvent) navigateFeature('next');
+      if (!selectedFeature && !showSundayRoastModal && !showLiveMusicModal) return;
+      if (e.key === 'ArrowLeft' && !selectedEvent && !showSundayRoastModal && !showLiveMusicModal) navigateFeature('prev');
+      if (e.key === 'ArrowRight' && !selectedEvent && !showSundayRoastModal && !showLiveMusicModal) navigateFeature('next');
       if (e.key === 'Escape') {
         if (selectedEvent) setSelectedEvent(null);
-        else setSelectedFeature(null);
+        else if (selectedFeature) setSelectedFeature(null);
+        else if (showSundayRoastModal) setShowSundayRoastModal(false);
+        else if (showLiveMusicModal) setShowLiveMusicModal(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedFeature, selectedEvent]);
+  }, [selectedFeature, selectedEvent, showSundayRoastModal, showLiveMusicModal]);
 
   // Reset drill-down when feature changes
   useEffect(() => {
@@ -485,7 +489,7 @@ const App: React.FC = () => {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: isPageReady ? 1 : 0, y: isPageReady ? 0 : 8 }}
             transition={{ duration: 1.2, delay: 0.5, ease: "easeInOut" }}
-            className="flex items-center gap-3 md:gap-4 text-[10px] md:text-sm font-bold tracking-[0.2em] uppercase mb-6 bg-black/60 px-6 py-2 rounded-full backdrop-blur-md border border-white/10 shadow-lg"
+            className="absolute top-[96px] flex items-center gap-3 md:gap-4 text-[10px] md:text-sm font-bold tracking-[0.2em] uppercase mb-6 bg-black/60 px-6 py-2 rounded-full backdrop-blur-md border border-white/10 shadow-lg"
           >
             <span className="text-[#f78e2c]"><MapPin className="inline w-3 h-3 mr-1 mb-0.5" />Leamington Spa</span>
           </motion.div>
@@ -533,7 +537,7 @@ const App: React.FC = () => {
              
              <div className="flex gap-4 flex-1">
                 <motion.button
-                  onClick={() => scrollToSection('eat-drink')}
+                  onClick={() => setShowSundayRoastModal(true)}
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: isPageReady ? 1 : 0, y: isPageReady ? 0 : 8 }}
                   transition={{ duration: 1, delay: 1.25, ease: "easeInOut" }}
@@ -547,7 +551,7 @@ const App: React.FC = () => {
                   <span>Sunday Roast</span>
                 </motion.button>
                 <motion.button
-                  onClick={() => scrollToSection('whats-on')}
+                  onClick={() => setShowLiveMusicModal(true)}
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: isPageReady ? 1 : 0, y: isPageReady ? 0 : 8 }}
                   transition={{ duration: 1, delay: 1.4, ease: "easeInOut" }}
@@ -1072,6 +1076,244 @@ const App: React.FC = () => {
               </div>
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Sunday Roast Promotional Modal */}
+      <AnimatePresence>
+        {showSundayRoastModal && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowSundayRoastModal(false)}
+              className="fixed inset-0 z-[70] bg-black/90 backdrop-blur-md cursor-pointer"
+            />
+
+            {/* Modal Content */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              onClick={(e) => e.stopPropagation()}
+              className="fixed inset-0 z-[71] flex items-center justify-center p-4 md:p-8 pointer-events-none"
+            >
+              <div 
+                className="relative max-w-4xl w-full h-[90vh] md:h-[85vh] pointer-events-auto rounded-2xl md:rounded-3xl overflow-hidden border border-white/10 shadow-2xl group"
+                style={{ 
+                  backgroundColor: '#0b1219'
+                }}
+              >
+                {/* Close Button */}
+                <button
+                  onClick={() => setShowSundayRoastModal(false)}
+                  className="absolute top-4 right-4 z-50 p-2 rounded-full bg-black/50 text-white hover:bg-white hover:text-black transition-colors border border-white/10 backdrop-blur-md"
+                  aria-label="Close"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+
+                {/* Navigation Arrows */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowSundayRoastModal(false);
+                  }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-50 p-3 rounded-full bg-black/50 text-white hover:bg-white hover:text-black transition-colors border border-white/10 backdrop-blur-md opacity-0 group-hover:opacity-100 md:opacity-100"
+                  aria-label="Previous"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowSundayRoastModal(false);
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-50 p-3 rounded-full bg-black/50 text-white hover:bg-white hover:text-black transition-colors border border-white/10 backdrop-blur-md opacity-0 group-hover:opacity-100 md:opacity-100"
+                  aria-label="Next"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+
+                {/* Promotional Image Background */}
+                <div className="relative w-full h-full">
+                  <img
+                    src="/images/events/IMG_9614.jpg"
+                    alt="Sunday Roast"
+                    className="w-full h-full object-cover"
+                  />
+                  
+                  {/* Dark Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/80 to-black/60" />
+                  
+                  {/* Content Overlay */}
+                  <div className="absolute inset-0 flex flex-col justify-between p-6 md:p-12">
+                    {/* Top Section - Tag and Title */}
+                    <div className="flex flex-col items-start">
+                      {/* FOOD EVENT Tag */}
+                      <div className="flex items-center gap-2 mb-4">
+                        <Utensils className="w-4 h-4 text-white" />
+                        <span className="text-white text-xs md:text-sm font-bold tracking-[0.2em] uppercase">
+                          FOOD EVENT
+                        </span>
+                      </div>
+
+                      {/* Title */}
+                      <h2 className="text-4xl md:text-7xl font-heading font-bold uppercase text-white leading-none mb-3">
+                        SUNDAY ROAST
+                      </h2>
+
+                      {/* Subtitle */}
+                      <p className="text-[#f78e2c] text-lg md:text-2xl font-bold uppercase tracking-wider">
+                        WEEKLY TRADITION
+                      </p>
+                    </div>
+
+                    {/* Bottom Section - Description and CTA */}
+                    <div className="flex flex-col gap-6">
+                      {/* Description */}
+                      <p className="text-white text-base md:text-lg leading-relaxed max-w-2xl font-light">
+                        A proper Sunday Feast. Slow-roasted meats, giant yorkshire puddings, roast potatoes and seasonal veg. Served all day Sunday until sold out.
+                      </p>
+
+                      {/* CTA Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleBooking();
+                        }}
+                        className="w-full md:w-auto px-8 py-4 bg-[#f78e2c] text-black font-bold font-heading uppercase tracking-widest text-sm md:text-base rounded-xl hover:bg-white transition-all duration-300 shadow-[0_0_30px_rgba(247,142,44,0.4)]"
+                      >
+                        BOOK EXPERIENCE NOW
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Live Music Calendar Promotional Modal */}
+      <AnimatePresence>
+        {showLiveMusicModal && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowLiveMusicModal(false)}
+              className="fixed inset-0 z-[70] bg-black/90 backdrop-blur-md cursor-pointer"
+            />
+
+            {/* Modal Content */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              onClick={(e) => e.stopPropagation()}
+              className="fixed inset-0 z-[71] flex items-center justify-center p-4 md:p-8 pointer-events-none"
+            >
+              <div 
+                className="relative max-w-4xl w-full h-[90vh] md:h-[85vh] pointer-events-auto rounded-2xl md:rounded-3xl overflow-hidden border border-white/10 shadow-2xl group"
+                style={{ 
+                  backgroundColor: '#0b1219'
+                }}
+              >
+                {/* Close Button */}
+                <button
+                  onClick={() => setShowLiveMusicModal(false)}
+                  className="absolute top-4 right-4 z-50 p-2 rounded-full bg-black/50 text-white hover:bg-white hover:text-black transition-colors border border-white/10 backdrop-blur-md"
+                  aria-label="Close"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+
+                {/* Navigation Arrows */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowLiveMusicModal(false);
+                  }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-50 p-3 rounded-full bg-black/50 text-white hover:bg-white hover:text-black transition-colors border border-white/10 backdrop-blur-md opacity-0 group-hover:opacity-100 md:opacity-100"
+                  aria-label="Previous"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowLiveMusicModal(false);
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-50 p-3 rounded-full bg-black/50 text-white hover:bg-white hover:text-black transition-colors border border-white/10 backdrop-blur-md opacity-0 group-hover:opacity-100 md:opacity-100"
+                  aria-label="Next"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+
+                {/* Promotional Image Background */}
+                <div className="relative w-full h-full">
+                  <img
+                    src={EVENTS[0].image}
+                    alt="Live Music Calendar"
+                    className="w-full h-full object-cover"
+                  />
+                  
+                  {/* Dark Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/80 to-black/60" />
+                  
+                  {/* Content Overlay */}
+                  <div className="absolute inset-0 flex flex-col justify-between p-6 md:p-12">
+                    {/* Top Section - Tag and Title */}
+                    <div className="flex flex-col items-start">
+                      {/* MUSIC Tag */}
+                      <div className="flex items-center gap-2 mb-4">
+                        <Music className="w-4 h-4 text-white" />
+                        <span className="text-white text-xs md:text-sm font-bold tracking-[0.2em] uppercase">
+                          MUSIC
+                        </span>
+                      </div>
+
+                      {/* Title */}
+                      <h2 className="text-4xl md:text-7xl font-heading font-bold uppercase text-white leading-none mb-3">
+                        LIVE MUSIC CALENDAR
+                      </h2>
+
+                      {/* Subtitle */}
+                      <p className="text-[#f78e2c] text-lg md:text-2xl font-bold uppercase tracking-wider">
+                        {EVENTS[0].category}
+                      </p>
+                    </div>
+
+                    {/* Bottom Section - Description and CTA */}
+                    <div className="flex flex-col gap-6">
+                      {/* Description */}
+                      <p className="text-white text-base md:text-lg leading-relaxed max-w-2xl font-light">
+                        {EVENTS[0].description}
+                      </p>
+
+                      {/* CTA Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleBooking();
+                        }}
+                        className="w-full md:w-auto px-8 py-4 bg-[#f78e2c] text-black font-bold font-heading uppercase tracking-widest text-sm md:text-base rounded-xl hover:bg-white transition-all duration-300 shadow-[0_0_30px_rgba(247,142,44,0.4)]"
+                      >
+                        BOOK EXPERIENCE NOW
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>

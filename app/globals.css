@@ -11,6 +11,8 @@
     scrollbar-width: thin;  /* Firefox */
     scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
     background-color: #0b1219; /* Deep Slate Blue */
+    /* Color scheme for consistent rendering across Android and iOS */
+    color-scheme: dark;
   }
   
   /* Custom Scrollbar for Webkit (Chrome, Safari, etc) */
@@ -34,8 +36,8 @@
   
   body {
     font-family: 'Space Grotesk', sans-serif;
-    background-color: #0b1219; /* Deep Slate Blue */
-    color: #fff;
+    background-color: #0b1219; /* Deep Slate Blue - solid hex for color consistency */
+    color: #ffffff; /* Solid hex white for consistency */
     overflow-x: hidden;
   }
   

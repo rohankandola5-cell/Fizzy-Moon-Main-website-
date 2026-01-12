@@ -8,6 +8,8 @@ const __dirname = dirname(__filename);
 const projectRoot = join(__dirname, '..');
 
 const INPUT_DIR = join(projectRoot, 'public', 'images');
+// Output to normalized directory - update image paths after normalization
+// Or set to INPUT_DIR to replace originals (backup recommended first)
 const OUTPUT_DIR = join(projectRoot, 'public', 'images-normalized');
 
 const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png'];
@@ -47,7 +49,7 @@ async function normalizeImage(inputPath) {
   
   try {
     let pipeline = sharp(inputPath)
-      .toColorspace('srgb') // Convert to sRGB
+      .toColorspace('srgb') // Convert to sRGB color space for consistent rendering
       .removeAlpha(); // Remove alpha channel for consistency
     
     if (isJpeg) {
@@ -108,8 +110,16 @@ async function main() {
     }
     
     console.log(`\n✓ Completed: ${successCount} succeeded, ${failCount} failed`);
-    console.log(`\nNormalized images are in: ${OUTPUT_DIR}`);
-    console.log('Update your image paths to use /images-normalized/ instead of /images/');
+    console.log(`\nNormalized images have been saved to: ${OUTPUT_DIR}`);
+    console.log('All images have been converted to sRGB color space for consistent rendering across devices.');
+    if (OUTPUT_DIR !== INPUT_DIR) {
+      console.log('\n⚠️  Next steps:');
+      console.log('1. Review the normalized images in /public/images-normalized/');
+      console.log('2. Replace originals in /public/images/ with normalized versions');
+      console.log('3. Or update image paths in your code to use /images-normalized/');
+    } else {
+      console.log('\n⚠️  Note: Original images have been replaced. Make sure to backup your originals before running this script.');
+    }
     
   } catch (error) {
     console.error('Error during normalization:', error);
