@@ -70,7 +70,7 @@ const EVENTS: FeatureItem[] = [
     name: 'Sunday Roast', 
     category: 'Weekly Tradition', 
     tag: 'FOOD EVENT', 
-    image: '/images/events/IMG_9614.png',
+    image: '/images/events/IMG_9614.PNG',
     description: 'A proper Sunday Feast. Slow-roasted meats, giant yorkshire puddings, roast potatoes and seasonal veg. Served all day Sunday until sold out.'
   },
   { 

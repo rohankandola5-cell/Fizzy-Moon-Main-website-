@@ -71,7 +71,7 @@ export const promoImages = {
  */
 export const eventImages = {
   liveMusic: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=1000&auto=format&fit=crop',
-  sundayRoast: '/images/events/IMG_9614.png',
+  sundayRoast: '/images/events/IMG_9614.PNG',
   quiz: 'https://images.unsplash.com/photo-1632211910609-02ae6a746532?q=80&w=1000&auto=format&fit=crop',
 };
 
