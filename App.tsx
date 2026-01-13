@@ -78,7 +78,7 @@ const EVENTS: FeatureItem[] = [
     name: 'Marquee Private Hire', 
     category: 'private', 
     tag: 'CORPORATE', 
-    image: '/images/events/img_8872.jpg',
+    image: '/images/events/IMG_8872.JPG',
     description: 'Test your knowledge and win big prizes. Our weekly quiz night is the perfect excuse for a midweek pint.'
   }
 ];
