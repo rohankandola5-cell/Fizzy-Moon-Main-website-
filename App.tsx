@@ -750,13 +750,14 @@ const App: React.FC = () => {
           />
 
           {/* PRIMARY CALLS TO ACTION - Immediate Visibility */}
-          <div className="flex flex-col md:flex-row gap-4 w-full max-w-2xl px-4">
+          <div className="flex flex-col md:flex-row gap-4 w-full max-w-2xl px-4 isolate">
              <motion.button
                onClick={handleBooking}
                initial={{ opacity: 0, y: 8 }}
                animate={{ opacity: isPageReady ? 1 : 0, y: isPageReady ? 0 : 8 }}
                transition={{ duration: 1, delay: 1.1, ease: "easeInOut" }}
                className="flex-1 py-4 rounded-xl bg-[#f78e2c] text-black font-bold text-sm md:text-base tracking-widest uppercase hover:bg-white transition-all duration-300 shadow-[0_0_30px_rgba(247,142,44,0.3)] flex items-center justify-center gap-2"
+               style={{ backgroundColor: '#f78e2c' }}
              >
                <Calendar className="w-4 h-4 md:w-5 md:h-5" /> Book A Table
              </motion.button>
