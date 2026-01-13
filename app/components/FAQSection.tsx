@@ -9,7 +9,7 @@ const FAQSection: React.FC = () => {
       <div className="max-w-4xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-6xl font-heading font-bold uppercase mb-4">
-            Common <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-amber-500">Questions</span>
+            Common <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-[#fbbf24]">Questions</span>
           </h2>
           <p className="text-gray-300">Everything you need to know before you go.</p>
         </div>

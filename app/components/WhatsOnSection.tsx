@@ -16,7 +16,7 @@ const WhatsOnSection: React.FC<WhatsOnSectionProps> = ({ events, onFeatureClick 
         <div className="flex flex-col items-center mb-16">
           <span className="text-brand-orange font-mono text-sm tracking-[0.3em] uppercase mb-4">Live & Loud</span>
           <h2 className="text-5xl md:text-8xl font-heading font-bold uppercase text-center">
-            What's <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-amber-500">On</span>
+            What's <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-[#fbbf24]">On</span>
           </h2>
         </div>
         

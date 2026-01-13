@@ -22,7 +22,7 @@ const EatDrinkSection: React.FC<EatDrinkSectionProps> = ({ foodDrink, onFeatureC
               <div className="h-px w-12 bg-brand-orange" />
             </div>
             <h2 className="text-5xl md:text-7xl font-heading font-bold uppercase leading-none mb-6">
-              More Than <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-amber-500">A Pub</span>
+              More Than <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-[#fbbf24]">A Pub</span>
             </h2>
             <p className="text-lg text-gray-200 font-light leading-relaxed max-w-xl mb-8">
               Fizzy Moon is an extension of your night out. A place where the drinks are crafted in-house, the food is fire-kissed, and the music never stops.

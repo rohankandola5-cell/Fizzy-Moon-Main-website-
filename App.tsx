@@ -933,7 +933,7 @@ const App: React.FC = () => {
             <div className="flex flex-col items-center mb-16">
               <span className="text-[#f78e2c] font-mono text-sm tracking-[0.3em] uppercase mb-4">Live & Loud</span>
               <h2 className="text-5xl md:text-8xl font-heading font-bold uppercase text-center">
-                What's <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f78e2c] to-amber-500">On</span>
+                What's <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f78e2c] to-[#fbbf24]">On</span>
               </h2>
             </div>
             
@@ -955,7 +955,7 @@ const App: React.FC = () => {
                   <div className="h-px w-12 bg-[#f78e2c]/50" />
                </div>
                <h2 className="text-5xl md:text-7xl font-heading font-bold uppercase leading-none mb-6">
-                 More Than <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f78e2c] to-amber-500">A Pub</span>
+                 More Than <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f78e2c] to-[#fbbf24]">A Pub</span>
                </h2>
                <p className="text-lg text-gray-300 font-light leading-relaxed max-w-xl mb-8">
                  Fizzy Moon is an extension of your night out. A place where the drinks are crafted in-house, the food is fire-kissed, and the music never stops.
@@ -1002,7 +1002,7 @@ const App: React.FC = () => {
           <div className="max-w-4xl mx-auto px-6">
               <div className="text-center mb-16">
                   <h2 className="text-4xl md:text-6xl font-heading font-bold uppercase mb-4">
-                      Common <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f78e2c] to-amber-500">Questions</span>
+                      Common <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f78e2c] to-[#fbbf24]">Questions</span>
                   </h2>
                   <p className="text-gray-400">Everything you need to know before you go.</p>
               </div>
@@ -1112,7 +1112,7 @@ const App: React.FC = () => {
                            <h3 className="text-3xl md:text-5xl font-heading font-black uppercase leading-none text-white mb-1 tracking-tighter shadow-black drop-shadow-lg">
                               {selectedFeature.name}
                            </h3>
-                           <p className="text-base md:text-xl text-amber-500 font-medium tracking-widest uppercase">
+                           <p className="text-base md:text-xl text-[#fbbf24] font-medium tracking-widest uppercase">
                               {selectedFeature.category}
                            </p>
                         </div>
@@ -1180,7 +1180,7 @@ const App: React.FC = () => {
 
                                 <button 
                                     onClick={handleBooking}
-                                    className="w-full py-5 rounded-xl bg-[#f78e2c] text-black font-bold font-heading uppercase tracking-widest hover:bg-white hover:scale-[1.01] transition-all shadow-lg shadow-orange-500/20"
+                                    className="w-full py-5 rounded-xl bg-[#f78e2c] text-black font-bold font-heading uppercase tracking-widest hover:bg-white hover:scale-[1.01] transition-all shadow-lg shadow-[#f78e2c]/20"
                                 >
                                     Book Your Table
                                 </button>
@@ -1533,7 +1533,7 @@ const App: React.FC = () => {
                     <h3 className="text-3xl md:text-5xl font-heading font-black uppercase leading-none text-white mb-1 tracking-tighter shadow-black drop-shadow-lg">
                       {EVENTS[0].name.toUpperCase()}
                     </h3>
-                    <p className="text-base md:text-xl text-amber-500 font-medium tracking-widest uppercase">
+                    <p className="text-base md:text-xl text-[#fbbf24] font-medium tracking-widest uppercase">
                       {EVENTS[0].category}
                     </p>
                   </div>
