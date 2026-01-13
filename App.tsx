@@ -75,10 +75,10 @@ const EVENTS: FeatureItem[] = [
   },
   { 
     id: 'e3', 
-    name: 'Fizzy Quizzy', 
-    category: 'Thursday Nights', 
-    tag: 'TRIVIA', 
-    image: 'https://images.unsplash.com/photo-1632211910609-02ae6a746532?q=80&w=1000&auto=format&fit=crop',
+    name: 'Marquee Private Hire', 
+    category: 'private', 
+    tag: 'CORPORATE', 
+    image: '/images/events/img_8872.jpg',
     description: 'Test your knowledge and win big prizes. Our weekly quiz night is the perfect excuse for a midweek pint.'
   }
 ];
