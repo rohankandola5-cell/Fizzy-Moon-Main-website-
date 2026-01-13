@@ -17,6 +17,20 @@ interface PreloaderProps {
 const Preloader: React.FC<PreloaderProps> = ({ onComplete, assetsLoaded }) => {
   const [progress, setProgress] = useState(0);
   const [statusText, setStatusText] = useState("UNCORKING");
+  
+  // OPTIMIZATION: Detect mobile devices (Android & iPhone) for reduced animations
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                            window.innerWidth < 768;
+      setIsMobile(isMobileDevice);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Define the new color palette
   const THEME = {
@@ -75,9 +89,11 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete, assetsLoaded }) => {
     };
   }, [onComplete, assetsLoaded]);
 
+  // OPTIMIZATION: Reduced bubble counts on mobile (160 -> 100) for better performance
   // Bubbles inside the liquid with enhanced natural physics
   const liquidBubbles = useMemo(() => {
-    return Array.from({ length: 160 }).map((_, i) => {
+    const bubbleCount = isMobile ? 100 : 160;
+    return Array.from({ length: bubbleCount }).map((_, i) => {
       const type = Math.random();
       let left, size, duration, delay, opacity;
       let xKeyframes: number[] = []; 
@@ -140,8 +156,9 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete, assetsLoaded }) => {
         opacityKeyframes
       };
     });
-  }, []);
+  }, [isMobile]);
 
+  // OPTIMIZATION: Reduced ambient bubbles on mobile (150 -> 80) for better performance
   // Bubbles in the background - Matched to main page Bubbles style (Gold/Amber/White)
   const ambientBubbles = useMemo(() => {
     // Adjusted to match the new Orange (#f78e2c) and lighter tones
@@ -151,7 +168,8 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete, assetsLoaded }) => {
       'bg-[#ffb066]/30 shadow-[0_0_5px_rgba(255,176,102,0.5)]', // Lighter Orange
     ];
 
-    return Array.from({ length: 150 }).map((_, i) => {
+    const bubbleCount = isMobile ? 80 : 150;
+    return Array.from({ length: bubbleCount }).map((_, i) => {
       const isSmall = Math.random() > 0.2; // Mostly small bubbles
       const size = isSmall ? Math.random() * 3 + 1 : Math.random() * 6 + 4;
       
@@ -167,7 +185,7 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete, assetsLoaded }) => {
         blur: Math.random() < 0.3 ? 0 : Math.random() * 2 // Mix of sharp and blurry for depth
       };
     });
-  }, []);
+  }, [isMobile]);
 
   const LOGO_URL = "/images/logo/fizzy_moon_white_final.png";
 

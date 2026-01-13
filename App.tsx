@@ -305,6 +305,21 @@ const App: React.FC = () => {
   const [currentHeroImage, setCurrentHeroImage] = useState(0);
   const [isPageReady, setIsPageReady] = useState(false);
   
+  // OPTIMIZATION: Detect mobile devices (Android & iPhone) for performance optimizations
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                            window.innerWidth < 768 ||
+                            ('ontouchstart' in window);
+      setIsMobile(isMobileDevice);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
   // Get filtered music schedule (past events removed)
   const filteredMusicSchedule = getFilteredMusicSchedule();
   
@@ -325,27 +340,19 @@ const App: React.FC = () => {
     const setReady = () => {
       if (isReadySet) return;
       isReadySet = true;
-      // Ensure we're at top, then show content after layout settles
-      window.scrollTo({ top: 0, behavior: 'auto' });
-      // Wait for scroll to complete and layout to settle
-      setTimeout(() => {
-        window.scrollTo({ top: 0, behavior: 'auto' });
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            setIsPageReady(true);
-          });
-        });
-      }, 50);
+      // OPTIMIZATION: Single RAF instead of nested double RAF for faster page ready
+      requestAnimationFrame(() => {
+        setIsPageReady(true);
+      });
     };
 
     // Wait for page to be ready before showing content and scrolling
     const checkPageReady = () => {
-      // Wait for next frame to ensure DOM is painted
+      // OPTIMIZATION: Single RAF instead of nested double RAF for faster page ready
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          // Check if critical images are loaded (handles cached images too)
-          const logoImg = new Image();
-          const heroImg = new Image();
+        // Check if critical images are loaded (handles cached images too)
+        const logoImg = new Image();
+        const heroImg = new Image();
           
           let logoLoaded = false;
           let heroLoaded = false;
@@ -392,7 +399,6 @@ const App: React.FC = () => {
           setTimeout(() => {
             setReady();
           }, 500);
-        });
       });
     };
 
@@ -444,11 +450,19 @@ const App: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // OPTIMIZATION: Throttled scroll handler for better performance on mobile
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 50);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -613,11 +627,11 @@ const App: React.FC = () => {
       {/* Optimized Background */}
       <FluidBackground />
       
-      {/* Navigation - Z-50 (Highest) */}
+      {/* Navigation - Z-50 (Highest) - OPTIMIZATION: Reduced backdrop-blur on mobile */}
       <nav 
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled 
-            ? 'py-4 bg-[#0b1219]/90 backdrop-blur-xl border-b border-white/10 shadow-lg pointer-events-auto' 
+            ? `py-4 bg-[#0b1219]/90 ${isMobile ? 'backdrop-blur-md' : 'backdrop-blur-xl'} border-b border-white/10 shadow-lg pointer-events-auto` 
             : 'py-6 pointer-events-none'
         }`}
       >
@@ -630,9 +644,9 @@ const App: React.FC = () => {
             />
           </div>
           
-          {/* Desktop Menu - Center */}
+          {/* Desktop Menu - Center - OPTIMIZATION: Reduced backdrop-blur on mobile */}
           <div className="hidden md:flex flex-1 justify-center pointer-events-auto">
-            <div className="flex bg-[#15222e]/50 backdrop-blur-xl border border-white/10 p-1.5 rounded-full shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] gap-1 ring-1 ring-white/5">
+            <div className={`flex bg-[#15222e]/50 ${isMobile ? 'backdrop-blur-md' : 'backdrop-blur-xl'} border border-white/10 p-1.5 rounded-full shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] gap-1 ring-1 ring-white/5`}>
               {navItems.map((item) => (
                 <button 
                   key={item} 
@@ -942,7 +956,7 @@ const App: React.FC = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-3 border-t border-l border-white/10 bg-black/20 backdrop-blur-sm">
               {EVENTS.map((feature) => (
-                <ArtistCard key={feature.id} artist={feature} onClick={() => setSelectedFeature(feature)} />
+                <ArtistCard key={feature.id} artist={feature} onClick={() => feature.id === 'e2' ? setShowSundayRoastModal(true) : setSelectedFeature(feature)} />
               ))}
             </div>
          </div>
@@ -1013,7 +1027,7 @@ const App: React.FC = () => {
           </div>
       </section>
 
-      <footer id="contact" className="relative z-10 border-t border-white/10 py-12 md:py-16 bg-[#0b1219]/80 backdrop-blur-xl">
+      <footer id="contact" className={`relative z-10 border-t border-white/10 py-12 md:py-16 bg-[#0b1219]/80 ${isMobile ? 'backdrop-blur-md' : 'backdrop-blur-xl'}`}>
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
           <div>
              <div className="mb-6">
@@ -1047,7 +1061,7 @@ const App: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedFeature(null)}
-            className="fixed inset-0 z-[60] flex items-end md:items-center justify-center p-0 md:p-6 bg-black/90 backdrop-blur-xl cursor-auto"
+            className={`fixed inset-0 z-[60] flex items-end md:items-center justify-center p-0 md:p-6 bg-black/90 ${isMobile ? 'backdrop-blur-md' : 'backdrop-blur-xl'} cursor-auto`}
           >
           <motion.div
             initial={{ y: '100%', opacity: 0.5 }}
@@ -1141,7 +1155,7 @@ const App: React.FC = () => {
                             className="h-full flex flex-col"
                         >
                             {/* Sticky Back Button Header */}
-                            <div className="sticky top-0 z-40 bg-[#15222e]/95 backdrop-blur-xl border-b border-white/10 p-4">
+                            <div className={`sticky top-0 z-40 bg-[#15222e]/95 ${isMobile ? 'backdrop-blur-md' : 'backdrop-blur-xl'} border-b border-white/10 p-4`}>
                                 <button 
                                     onClick={() => setSelectedEvent(null)}
                                     className="flex items-center gap-2 text-white/70 hover:text-[#f78e2c] transition-colors font-mono uppercase text-xs tracking-widest"
@@ -1202,7 +1216,7 @@ const App: React.FC = () => {
                                <>
                                  {/* Month Navigation */}
                                  <div className="sticky top-0 z-30 py-2 mb-4 -mx-5 px-5 md:-mx-8 md:px-8 bg-[#15222e]/95 backdrop-blur-sm border-b border-white/5 flex justify-start overflow-x-auto no-scrollbar">
-                                     <div className="relative flex items-center bg-white/5 backdrop-blur-xl border border-white/10 rounded-full p-1 shadow-2xl">
+                                     <div className={`relative flex items-center bg-white/5 ${isMobile ? 'backdrop-blur-md' : 'backdrop-blur-xl'} border border-white/10 rounded-full p-1 shadow-2xl`}>
                                          {MUSIC_SCHEDULE.map((month, idx) => {
                                              const isActive = activeMonth === idx;
                                              return (
@@ -1357,38 +1371,38 @@ const App: React.FC = () => {
               className="fixed inset-0 z-[70] bg-black/90 backdrop-blur-md cursor-pointer"
             />
 
-            {/* Modal Content */}
+            {/* Modal Content - Better mobile positioning */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
               onClick={(e) => e.stopPropagation()}
-              className="fixed inset-0 z-[71] flex items-center justify-center p-4 md:p-8 pointer-events-none"
+              className="fixed inset-0 z-[71] flex items-end md:items-center justify-center p-0 md:p-8 pointer-events-none"
             >
               <div 
-                className="relative max-w-5xl w-full h-[95vh] md:h-[90vh] pointer-events-auto rounded-2xl md:rounded-3xl overflow-hidden border-4 border-[#1e3a5f] shadow-2xl group"
+                className="relative max-w-5xl w-full h-[95vh] md:h-[90vh] max-h-[95vh] md:max-h-[90vh] pointer-events-auto rounded-t-3xl md:rounded-3xl overflow-hidden border-t-4 md:border-4 border-[#1e3a5f] shadow-2xl group"
                 style={{ 
                   backgroundColor: '#f78e2c'
                 }}
               >
-                {/* Close Button */}
+                {/* Close Button - Better mobile positioning */}
                 <button
                   onClick={() => setShowSundayRoastModal(false)}
-                  className="absolute top-3 right-3 z-50 p-2 rounded-full bg-black/70 text-white hover:bg-white hover:text-black transition-colors border border-white/20 backdrop-blur-md"
+                  className="absolute top-2 right-2 md:top-3 md:right-3 z-50 p-2.5 md:p-2 rounded-full bg-black/80 text-white hover:bg-white hover:text-black transition-colors border border-white/20 backdrop-blur-md touch-manipulation"
                   aria-label="Close"
                 >
-                  <X className="w-4 h-4 md:w-5 md:h-5" />
+                  <X className="w-5 h-5 md:w-5 md:h-5" />
                 </button>
 
-                {/* 25% Off Gift Badge - Top Right Corner */}
-                <div className="absolute top-0 right-0 z-40 transform rotate-12 origin-top-right">
-                  <div className="bg-gradient-to-br from-yellow-300 to-yellow-500 border-2 border-black shadow-2xl rounded-lg p-2 md:p-3 relative">
-                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-black rounded-full"></div>
+                {/* 25% Off Gift Badge - Top Right Corner - Smaller on mobile */}
+                <div className="absolute top-0 right-0 z-40 transform rotate-12 origin-top-right scale-75 md:scale-100">
+                  <div className="bg-gradient-to-br from-yellow-300 to-yellow-500 border-2 border-black shadow-2xl rounded-lg p-1.5 md:p-3 relative">
+                    <div className="absolute -top-1 -right-1 w-2 h-2 md:w-3 md:h-3 bg-black rounded-full"></div>
                     <div className="text-center">
-                      <div className="text-lg md:text-2xl font-black text-black leading-none">25%</div>
-                      <div className="text-[8px] md:text-[10px] font-bold text-black uppercase tracking-tight">OFF</div>
-                      <div className="text-[7px] md:text-[9px] text-black/90 font-semibold mt-0.5">Online Only</div>
+                      <div className="text-base md:text-2xl font-black text-black leading-none">25%</div>
+                      <div className="text-[7px] md:text-[10px] font-bold text-black uppercase tracking-tight">OFF</div>
+                      <div className="text-[6px] md:text-[9px] text-black/90 font-semibold mt-0.5">Online Only</div>
                     </div>
                   </div>
                 </div>
@@ -1416,102 +1430,102 @@ const App: React.FC = () => {
                 </button>
 
                 {/* Content Container */}
-                <div className="relative w-full h-full overflow-y-auto">
-                  <div className="p-6 md:p-8 lg:p-10">
-                    {/* Title Section */}
-                    <div className="mb-4 md:mb-6">
-                      <div className="bg-black px-5 py-3 md:px-8 md:py-4 inline-block">
-                        <h2 className="text-3xl md:text-5xl lg:text-6xl font-heading font-bold uppercase text-white leading-tight">
+                <div className="relative w-full h-full overflow-y-auto overscroll-contain">
+                  <div className="p-4 md:p-8 lg:p-10 pt-6 md:pt-8">
+                    {/* Title Section - Better mobile spacing */}
+                    <div className="mb-4 md:mb-6 mt-2 md:mt-0">
+                      <div className="bg-black px-4 py-2.5 md:px-8 md:py-4 inline-block">
+                        <h2 className="text-2xl md:text-5xl lg:text-6xl font-heading font-bold uppercase text-white leading-tight">
                           SUNDAY ROAST
                         </h2>
                       </div>
                     </div>
 
-                    {/* Description */}
-                    <p className="text-black text-sm md:text-base font-medium mb-6 md:mb-8 leading-relaxed max-w-3xl">
+                    {/* Description - Better mobile text */}
+                    <p className="text-black text-xs md:text-base font-medium mb-5 md:mb-8 leading-relaxed max-w-3xl">
                       All of our roasts are served with roast potatoes, bowl of seasonal vegetables, honey roasted parsnips, pigs in blankets Yorkshire pudding and traditional gravy
                     </p>
 
-                    {/* Menu Items Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mb-6 md:mb-8">
+                    {/* Menu Items Grid - Better mobile spacing */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 mb-5 md:mb-8">
                       {/* Classic Rump Roast */}
-                      <div className="bg-white rounded-lg p-4 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow">
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="text-lg md:text-xl font-bold text-black uppercase leading-tight pr-3 flex-1">
+                      <div className="bg-white rounded-lg p-3.5 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-1 sm:gap-0">
+                          <h3 className="text-base md:text-xl font-bold text-black uppercase leading-tight sm:pr-3 flex-1">
                             CLASSIC RUMP ROAST
                           </h3>
-                          <span className="text-xl md:text-2xl font-black text-black whitespace-nowrap">£21.00</span>
+                          <span className="text-lg md:text-2xl font-black text-black whitespace-nowrap self-start sm:self-auto">£21.00</span>
                         </div>
-                        <p className="text-sm md:text-base text-black/70">With sage and onion stuffing</p>
+                        <p className="text-xs md:text-base text-black/70">With sage and onion stuffing</p>
                       </div>
 
                       {/* Roast Pork Belly */}
-                      <div className="bg-white rounded-lg p-4 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow">
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="text-lg md:text-xl font-bold text-black uppercase leading-tight pr-3 flex-1">
+                      <div className="bg-white rounded-lg p-3.5 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-1 sm:gap-0">
+                          <h3 className="text-base md:text-xl font-bold text-black uppercase leading-tight sm:pr-3 flex-1">
                             ROAST PORK BELLY
                           </h3>
-                          <span className="text-xl md:text-2xl font-black text-black whitespace-nowrap">£19.00</span>
+                          <span className="text-lg md:text-2xl font-black text-black whitespace-nowrap self-start sm:self-auto">£19.00</span>
                         </div>
-                        <p className="text-sm md:text-base text-black/70">With sage and onion stuffing and crackling</p>
+                        <p className="text-xs md:text-base text-black/70">With sage and onion stuffing and crackling</p>
                       </div>
 
                       {/* Succulent Half Roast Chicken */}
-                      <div className="bg-white rounded-lg p-4 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow">
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="text-lg md:text-xl font-bold text-black uppercase leading-tight pr-3 flex-1">
+                      <div className="bg-white rounded-lg p-3.5 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-1 sm:gap-0">
+                          <h3 className="text-base md:text-xl font-bold text-black uppercase leading-tight sm:pr-3 flex-1">
                             SUCCULENT HALF ROAST CHICKEN
                           </h3>
-                          <span className="text-xl md:text-2xl font-black text-black whitespace-nowrap">£19.00</span>
+                          <span className="text-lg md:text-2xl font-black text-black whitespace-nowrap self-start sm:self-auto">£19.00</span>
                         </div>
-                        <p className="text-sm md:text-base text-black/70">With sage and onion stuffing</p>
+                        <p className="text-xs md:text-base text-black/70">With sage and onion stuffing</p>
                       </div>
 
                       {/* Nut Roast */}
-                      <div className="bg-white rounded-lg p-4 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow">
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="text-lg md:text-xl font-bold text-black uppercase leading-tight pr-3 flex-1">
-                            NUT ROAST <span className="text-sm font-normal">(V)</span>
+                      <div className="bg-white rounded-lg p-3.5 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-1 sm:gap-0">
+                          <h3 className="text-base md:text-xl font-bold text-black uppercase leading-tight sm:pr-3 flex-1">
+                            NUT ROAST <span className="text-xs md:text-sm font-normal">(V)</span>
                           </h3>
-                          <span className="text-xl md:text-2xl font-black text-black whitespace-nowrap">£18.00</span>
+                          <span className="text-lg md:text-2xl font-black text-black whitespace-nowrap self-start sm:self-auto">£18.00</span>
                         </div>
-                        <p className="text-sm md:text-base text-black/70">With traditional vegetarian gravy</p>
+                        <p className="text-xs md:text-base text-black/70">With traditional vegetarian gravy</p>
                       </div>
 
                       {/* Sharing Trio - Full Width */}
-                      <div className="bg-white rounded-lg p-4 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow md:col-span-2">
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="text-lg md:text-xl font-bold text-black uppercase leading-tight pr-3 flex-1">
+                      <div className="bg-white rounded-lg p-3.5 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow md:col-span-2">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-1 sm:gap-0">
+                          <h3 className="text-base md:text-xl font-bold text-black uppercase leading-tight sm:pr-3 flex-1">
                             SHARING TRIO
                           </h3>
-                          <span className="text-xl md:text-2xl font-black text-black whitespace-nowrap">£35.00</span>
+                          <span className="text-lg md:text-2xl font-black text-black whitespace-nowrap self-start sm:self-auto">£35.00</span>
                         </div>
-                        <p className="text-sm md:text-base text-black/70">All three meats with sage & onion stuffing and crackling to share for two</p>
+                        <p className="text-xs md:text-base text-black/70">All three meats with sage & onion stuffing and crackling to share for two</p>
                       </div>
                     </div>
 
                     {/* Extra Option - Subtle */}
-                    <div className="mb-6 md:mb-8 text-center">
-                      <p className="text-xs md:text-sm text-black/80 font-medium italic">
+                    <div className="mb-5 md:mb-8 text-center">
+                      <p className="text-[10px] md:text-sm text-black/80 font-medium italic">
                         Add an additional bowl of pigs in blankets for an extra £5 to any roast
                       </p>
                     </div>
 
-                    {/* Book Now Button */}
+                    {/* Book Now Button - Better mobile touch target */}
                     <div className="mb-4">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleBooking();
                         }}
-                        className="w-full px-8 py-4 md:py-5 bg-black text-white font-bold font-heading uppercase tracking-widest text-base md:text-lg rounded-lg hover:bg-white hover:text-black transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-[1.02]"
+                        className="w-full px-6 md:px-8 py-3.5 md:py-5 bg-black text-white font-bold font-heading uppercase tracking-widest text-sm md:text-lg rounded-lg hover:bg-white hover:text-black active:scale-[0.98] transition-all duration-300 shadow-xl hover:shadow-2xl touch-manipulation"
                       >
                         BOOK NOW
                       </button>
                     </div>
 
                     {/* Disclaimer */}
-                    <p className="text-xs md:text-sm text-black/60 text-center font-medium">
+                    <p className="text-[10px] md:text-sm text-black/60 text-center font-medium pb-2 md:pb-0">
                       *Available every Sunday from 12pm. Subject to availability.
                     </p>
                   </div>
@@ -1592,7 +1606,7 @@ const App: React.FC = () => {
                   <div className="max-w-4xl mx-auto p-5 md:p-8 pt-3 md:pt-4">
                     {/* Month Navigation */}
                     <div className="sticky top-0 z-30 py-2 mb-4 -mx-5 px-5 md:-mx-8 md:px-8 bg-[#15222e]/95 backdrop-blur-sm border-b border-white/5 flex justify-start overflow-x-auto no-scrollbar">
-                      <div className="relative flex items-center bg-white/5 backdrop-blur-xl border border-white/10 rounded-full p-1 shadow-2xl">
+                      <div className={`relative flex items-center bg-white/5 ${isMobile ? 'backdrop-blur-md' : 'backdrop-blur-xl'} border border-white/10 rounded-full p-1 shadow-2xl`}>
                         {filteredMusicSchedule.map((month, idx) => {
                           const isActive = promoActiveMonth === idx;
                           return (

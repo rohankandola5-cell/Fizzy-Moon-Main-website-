@@ -11,6 +11,20 @@ import { motion } from 'framer-motion';
 
 const Bubbles: React.FC = () => {
   const [bubbles, setBubbles] = useState<any[]>([]);
+  
+  // OPTIMIZATION: Detect mobile devices (Android & iPhone) for reduced animations
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                            window.innerWidth < 768;
+      setIsMobile(isMobileDevice);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     // Champagne/Beer tones: Gold, Amber, White
@@ -20,8 +34,9 @@ const Bubbles: React.FC = () => {
       'bg-[#fcd34d]/30 shadow-[0_0_5px_rgba(253,211,77,0.5)]', // Pale Gold
     ];
 
-    // PERFORMANCE: Reduced bubble count from 120 to 30.
-    const generatedBubbles = Array.from({ length: 30 }).map((_, i) => {
+    // OPTIMIZATION: Reduced bubble count on mobile (30 -> 20) for better performance
+    const bubbleCount = isMobile ? 20 : 30;
+    const generatedBubbles = Array.from({ length: bubbleCount }).map((_, i) => {
       const isSmall = Math.random() > 0.15;
       const size = isSmall ? Math.random() * 3 + 1 : Math.random() * 6 + 4; // Mostly 1-4px
       
@@ -41,7 +56,7 @@ const Bubbles: React.FC = () => {
       };
     });
     setBubbles(generatedBubbles);
-  }, []);
+  }, [isMobile]);
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 select-none mix-blend-screen">
@@ -54,6 +69,7 @@ const Bubbles: React.FC = () => {
             width: bubble.size,
             height: bubble.size,
             bottom: -20,
+            willChange: 'transform, opacity', // OPTIMIZATION: Added will-change hint for better GPU acceleration
           }}
           animate={{
             y: '-120vh', // Rise well above the viewport
