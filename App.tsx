@@ -86,11 +86,11 @@ const EVENTS: FeatureItem[] = [
 const FOOD_DRINK: FeatureItem[] = [
   { 
     id: 'f1', 
-    name: 'Fizzy Burger', 
-    category: 'Fire Grill', 
+    name: 'Food Menu', 
+    category: 'Full Menu', 
     tag: 'Food Menu', 
     image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1000&auto=format&fit=crop',
-    description: 'Our legendary house burger. Double smashed beef patty, smoked bacon, american cheese, and our secret Fizzy sauce. Served with rosemary fries.'
+    description: 'Explore our complete food menu. From small plates to burgers, pizzas, and desserts - discover everything we have to offer.'
   },
   { 
     id: 'f2', 
@@ -982,7 +982,7 @@ const App: React.FC = () => {
                <div className="flex flex-wrap gap-8 border-t border-white/10 pt-6">
                   {[
                     { icon: Beer, label: "Home Brews" },
-                    { icon: Flame, label: "Fire Grill" },
+                    { icon: Utensils, label: "Full Menu" },
                     { icon: Music, label: "Live Music" },
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-3 text-white/80 group">
