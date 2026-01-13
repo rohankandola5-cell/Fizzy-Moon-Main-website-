@@ -87,8 +87,8 @@ const FOOD_DRINK: FeatureItem[] = [
   { 
     id: 'f1', 
     name: 'Fizzy Burger', 
-    category: 'Signature Grill', 
-    tag: 'FOOD', 
+    category: 'Fire Grill', 
+    tag: 'Food Menu', 
     image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1000&auto=format&fit=crop',
     description: 'Our legendary house burger. Double smashed beef patty, smoked bacon, american cheese, and our secret Fizzy sauce. Served with rosemary fries.'
   },
@@ -293,6 +293,7 @@ const App: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<any | null>(null); // For Drill-down view
   const [showSundayRoastModal, setShowSundayRoastModal] = useState(false);
   const [showLiveMusicModal, setShowLiveMusicModal] = useState(false);
+  const [showFoodMenuModal, setShowFoodMenuModal] = useState(false);
   
   const modalScrollRef = useRef<HTMLDivElement>(null);
   const promoModalScrollRef = useRef<HTMLDivElement>(null);
@@ -469,19 +470,20 @@ const App: React.FC = () => {
   // Handle keyboard navigation for modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!selectedFeature && !showSundayRoastModal && !showLiveMusicModal) return;
-      if (e.key === 'ArrowLeft' && !selectedEvent && !showSundayRoastModal && !showLiveMusicModal) navigateFeature('prev');
-      if (e.key === 'ArrowRight' && !selectedEvent && !showSundayRoastModal && !showLiveMusicModal) navigateFeature('next');
+      if (!selectedFeature && !showSundayRoastModal && !showLiveMusicModal && !showFoodMenuModal) return;
+      if (e.key === 'ArrowLeft' && !selectedEvent && !showSundayRoastModal && !showLiveMusicModal && !showFoodMenuModal) navigateFeature('prev');
+      if (e.key === 'ArrowRight' && !selectedEvent && !showSundayRoastModal && !showLiveMusicModal && !showFoodMenuModal) navigateFeature('next');
       if (e.key === 'Escape') {
         if (selectedEvent) setSelectedEvent(null);
         else if (selectedFeature) setSelectedFeature(null);
         else if (showSundayRoastModal) setShowSundayRoastModal(false);
         else if (showLiveMusicModal) setShowLiveMusicModal(false);
+        else if (showFoodMenuModal) setShowFoodMenuModal(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedFeature, selectedEvent, showSundayRoastModal, showLiveMusicModal]);
+  }, [selectedFeature, selectedEvent, showSundayRoastModal, showLiveMusicModal, showFoodMenuModal]);
 
   // Reset promo modal active month when it opens
   useEffect(() => {
@@ -1008,7 +1010,7 @@ const App: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 border-t border-l border-white/10 bg-white/5 backdrop-blur-sm">
             {FOOD_DRINK.map((feature) => (
-              <ArtistCard key={feature.id} artist={feature} onClick={() => setSelectedFeature(feature)} />
+              <ArtistCard key={feature.id} artist={feature} onClick={() => feature.id === 'f1' ? setShowFoodMenuModal(true) : setSelectedFeature(feature)} />
             ))}
           </div>
         </div>
@@ -1701,6 +1703,316 @@ const App: React.FC = () => {
                           </div>
                         </div>
                       ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Food Menu Modal */}
+      <AnimatePresence>
+        {showFoodMenuModal && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowFoodMenuModal(false)}
+              className="fixed inset-0 z-[70] bg-black/90 backdrop-blur-md cursor-pointer"
+            />
+
+            {/* Modal Content */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              onClick={(e) => e.stopPropagation()}
+              className="fixed inset-0 z-[71] flex items-end md:items-center justify-center p-0 md:p-8 pointer-events-none"
+            >
+              <div 
+                className="relative max-w-6xl w-full h-[95vh] md:h-[90vh] max-h-[95vh] md:max-h-[90vh] pointer-events-auto rounded-t-3xl md:rounded-3xl overflow-hidden border-t-4 md:border-4 border-[#1e3a5f] shadow-2xl group"
+                style={{ 
+                  backgroundColor: '#f78e2c'
+                }}
+              >
+                {/* Close Button */}
+                <button
+                  onClick={() => setShowFoodMenuModal(false)}
+                  className="absolute top-2 right-2 md:top-3 md:right-3 z-50 p-2.5 md:p-2 rounded-full bg-black/80 text-white hover:bg-white hover:text-black transition-colors border border-white/20 backdrop-blur-md touch-manipulation"
+                  aria-label="Close"
+                >
+                  <X className="w-5 h-5 md:w-5 md:h-5" />
+                </button>
+
+                {/* Content Container */}
+                <div className="relative w-full h-full overflow-y-auto overscroll-contain">
+                  <div className="p-4 md:p-8 lg:p-10 pt-6 md:pt-8">
+                    {/* Title Section */}
+                    <div className="mb-4 md:mb-6 mt-2 md:mt-0">
+                      <div className="bg-black px-4 py-2.5 md:px-8 md:py-4 inline-block">
+                        <h2 className="text-2xl md:text-5xl lg:text-6xl font-heading font-bold uppercase text-white leading-tight">
+                          FOOD MENU
+                        </h2>
+                      </div>
+                    </div>
+
+                    {/* Small Plates Section */}
+                    <div className="mb-6 md:mb-8">
+                      <div className="bg-black px-4 py-2 md:px-6 md:py-3 inline-block mb-3 md:mb-4">
+                        <h3 className="text-xl md:text-3xl font-heading font-bold uppercase text-white">Small Plates</h3>
+                      </div>
+                      <p className="text-black text-xs md:text-sm font-medium mb-3 md:mb-4">£9.00 Each or 3 for £25</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                        {[
+                          { name: 'CORN RIBS', description: 'Served with smoked chipotle lime mayo', price: '', badges: ['GF', 'NEW'] },
+                          { name: 'GARLIC CHILLI PRAWNS', description: 'Pan-fried prawns in garlic tomato-chilli served sauce with flatbread', price: '', badges: [] },
+                          { name: 'HALLOUMI MELTS', description: 'Served with lime and hot honey mayo', price: '', badges: ['GF', 'V'] },
+                          { name: 'BAKED MINI CAMEMBERT', description: 'Served with flatbread & chilli jam', price: '', badges: ['V', 'NEW'] },
+                          { name: 'TORTILLA CHIPS', description: 'Served with cheese sauce, sour cream, guacamole and tomato salsa', price: '', badges: ['GF', 'V'] },
+                          { name: 'MAC & CHEESE', description: 'Crispy bacon & cheese, layered with smoky bacon and sweet onion crunch', price: '', badges: ['NEW'], note: 'Upgrade to a large with grilled chicken +£5' },
+                          { name: 'CHICKEN TENDERS', description: 'Battered chicken strips served with smoked chipotle mayo', price: '', badges: [] },
+                          { name: 'FISH GOUJONS', description: 'Battered mini fish goujons served with Lemon & Dill mayo', price: '', badges: ['GF'] },
+                          { name: 'CRISPY CALAMARI', description: 'Served with tartare sauce', price: '', badges: ['GF'] },
+                          { name: 'CRISPY POTATO BITES', description: 'Served with smoked paprika & saffron mayo', price: '', badges: ['GF', 'V'] },
+                        ].map((item, idx) => (
+                          <div key={idx} className="bg-white rounded-lg p-3.5 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow">
+                            <div className="flex flex-wrap items-center gap-2 mb-2">
+                              <h4 className="text-base md:text-lg font-bold text-black uppercase leading-tight flex-1">{item.name}</h4>
+                              {item.badges.map((badge, i) => (
+                                <span key={i} className="text-xs md:text-sm font-bold bg-[#f78e2c] text-black px-2 py-0.5 rounded">{badge}</span>
+                              ))}
+                            </div>
+                            <p className="text-xs md:text-sm text-black/70 mb-1">{item.description}</p>
+                            {item.note && <p className="text-xs text-black/60 italic">{item.note}</p>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Light Bites Section */}
+                    <div className="mb-6 md:mb-8">
+                      <div className="bg-black px-4 py-2 md:px-6 md:py-3 inline-block mb-3 md:mb-4">
+                        <h3 className="text-xl md:text-3xl font-heading font-bold uppercase text-white">Light Bites</h3>
+                      </div>
+                      <p className="text-black text-xs md:text-sm font-medium mb-3 md:mb-4">Available Monday to Saturday 12-5pm</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                        {[
+                          { name: 'FIZZY CLUB SANDWICH', description: 'Chicken, smoked bacon, cheddar cheese, lettuce, tomato, mayo & toasted ciabatta & homemade chips', price: '£12', badges: ['NEW'] },
+                          { name: 'STEAK SANDWICH', description: 'Served in ciabatta bread with fried onions, dijon tarragon mayo & homemade chips', price: '£14', badges: [] },
+                          { name: 'SOUTHERN CHICK', description: 'Southern chicken, rocket and smoked chipotle mayo in ciabatta & homemade chips', price: '£11', badges: [] },
+                          { name: 'FISH FINGER SANDWICH', description: 'Battered fish fingers, rocket and tartare sauce in ciabatta & homemade chips', price: '£11', badges: [] },
+                        ].map((item, idx) => (
+                          <div key={idx} className="bg-white rounded-lg p-3.5 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow">
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-1 sm:gap-0">
+                              <div className="flex flex-wrap items-center gap-2 flex-1">
+                                <h4 className="text-base md:text-lg font-bold text-black uppercase leading-tight">{item.name}</h4>
+                                {item.badges.map((badge, i) => (
+                                  <span key={i} className="text-xs md:text-sm font-bold bg-[#f78e2c] text-black px-2 py-0.5 rounded">{badge}</span>
+                                ))}
+                              </div>
+                              <span className="text-lg md:text-xl font-black text-black whitespace-nowrap self-start sm:self-auto">{item.price}</span>
+                            </div>
+                            <p className="text-xs md:text-sm text-black/70">{item.description}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Favourites Section */}
+                    <div className="mb-6 md:mb-8">
+                      <div className="bg-black px-4 py-2 md:px-6 md:py-3 inline-block mb-3 md:mb-4">
+                        <h3 className="text-xl md:text-3xl font-heading font-bold uppercase text-white">Favourites</h3>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                        {[
+                          { name: 'GIANT COUS COUS & RATATOUILLE', description: 'Served with garlic flatbread', price: '£14', badges: ['NEW', 'VG'], note: 'Add chicken + £2' },
+                          { name: 'CHICKEN CAESAR SALAD', description: 'With garlic croutons, caesar dressing and parmesan cheese', price: '£14', badges: [] },
+                          { name: 'BRITISH ALE PIE', description: 'Steak ale pie served with mashed potato, mixed vegetables & classic gravy', price: '£17', badges: [] },
+                          { name: 'CLASSIC FISH AND CHIPS', description: 'Served with mushy peas and tartare sauce', price: '£16', badges: ['GF'] },
+                          { name: 'BEEF BOURGUIGNON', description: 'Slow-braised beef in red wine jus with mash, crispy onions & smoked bacon crumbs', price: '£17', badges: ['NEW'] },
+                          { name: 'THE BALTI', description: 'Authentic Balt served with rice, naan bread, mango chutney & mint yoghurt', price: '£17', badges: [], note: 'Choose from Chicken, Vegetable or Prawn' },
+                          { name: 'WING BUCKET', description: 'Chicken wings covered in', price: '£15', badges: ['NEW'], note: 'Choose from: Fizzy\'s Hot Glaze, Smoked BBQ, Lemon pepper served with Chipotle Mayo & homemade chips' },
+                        ].map((item, idx) => (
+                          <div key={idx} className="bg-white rounded-lg p-3.5 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow">
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-1 sm:gap-0">
+                              <div className="flex flex-wrap items-center gap-2 flex-1">
+                                <h4 className="text-base md:text-lg font-bold text-black uppercase leading-tight">{item.name}</h4>
+                                {item.badges.map((badge, i) => (
+                                  <span key={i} className="text-xs md:text-sm font-bold bg-[#f78e2c] text-black px-2 py-0.5 rounded">{badge}</span>
+                                ))}
+                              </div>
+                              <span className="text-lg md:text-xl font-black text-black whitespace-nowrap self-start sm:self-auto">{item.price}</span>
+                            </div>
+                            <p className="text-xs md:text-sm text-black/70 mb-1">{item.description}</p>
+                            {item.note && <p className="text-xs text-black/60 italic">{item.note}</p>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Pizzas Section */}
+                    <div className="mb-6 md:mb-8">
+                      <div className="bg-black px-4 py-2 md:px-6 md:py-3 inline-block mb-3 md:mb-4">
+                        <h3 className="text-xl md:text-3xl font-heading font-bold uppercase text-white">Pizzas</h3>
+                      </div>
+                      <p className="text-black text-xs md:text-sm font-medium mb-3 md:mb-4">Available gluten free bases</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                        {[
+                          { name: 'CLASSIC MARGHERITA', description: 'Tomato sauce, mozzarella cheese', price: '£12 (S) / £15 (L)', badges: [] },
+                          { name: 'SUPREMELY VEGGIE', description: 'Tomato sauce, mozzarella cheese, roasted peppers, red onions, sweetcorn, mushrooms, fresh rocket', price: '£13 (S) / £17 (L)', badges: ['V'] },
+                          { name: 'SWEET CHICKS', description: 'BBQ sauce, mozzarella cheese, roasted chicken, red onions, sweetcorn', price: '£15 (S) / £19 (L)', badges: [] },
+                          { name: 'SPICY AMERICAN', description: 'Tomato sauce, mozzarella cheese, pepperoni, spicy nduja, green jalapeños', price: '£15 (S) / £19 (L)', badges: ['SPICY', 'SPICY'] },
+                          { name: 'MOM CAPRI', description: 'Tomato sauce, mozzarella cheese, ham, mushrooms', price: '£15 (S) / £19 (L)', badges: ['NEW'] },
+                          { name: 'MEATADOR', description: 'Tomato sauce, mozzarella cheese, pepperoni, roasted chicken, spicy nduja, red onions', price: '£16 (S) / £20 (L)', badges: ['SPICY'] },
+                        ].map((item, idx) => (
+                          <div key={idx} className="bg-white rounded-lg p-3.5 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow">
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-1 sm:gap-0">
+                              <div className="flex flex-wrap items-center gap-2 flex-1">
+                                <h4 className="text-base md:text-lg font-bold text-black uppercase leading-tight">{item.name}</h4>
+                                {item.badges.map((badge, i) => (
+                                  <span key={i} className="text-xs md:text-sm font-bold bg-[#f78e2c] text-black px-2 py-0.5 rounded">{badge}</span>
+                                ))}
+                              </div>
+                              <span className="text-sm md:text-base font-black text-black whitespace-nowrap self-start sm:self-auto">{item.price}</span>
+                            </div>
+                            <p className="text-xs md:text-sm text-black/70">{item.description}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Burgers Section */}
+                    <div className="mb-6 md:mb-8">
+                      <div className="bg-black px-4 py-2 md:px-6 md:py-3 inline-block mb-3 md:mb-4">
+                        <h3 className="text-xl md:text-3xl font-heading font-bold uppercase text-white">Burgers</h3>
+                      </div>
+                      <p className="text-black text-xs md:text-sm font-medium mb-3 md:mb-4">Gluten Free buns available</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                        {[
+                          { name: 'FIZZY\'S ULTIMATE BURGER', description: 'Double stack beef patties, smoked bacon, cheese, mushrooms, fried onions, bacon ketchup sauce & gherkin', price: '£18', badges: ['NEW'], note: 'Add an extra patty +£2' },
+                          { name: 'EASY CHEESY', description: 'Beef patty, double stack of smoked cheese, fried onions, bacon ketchup sauce', price: '£16', badges: [] },
+                          { name: 'SOUTHERN CHICK', description: 'Double stack of Southern fried chicken breasts, roast red pepper, gherkins, smoked chipotle mayo', price: '£16', badges: [] },
+                          { name: 'THE HALLOUMI', description: 'Crispy Halloumi, roast red pepper, red houmous', price: '£15', badges: ['V'] },
+                          { name: 'THE VEGAN BURGER', description: 'Smoked tofu, roast red pepper, red houmous', price: '£14', badges: ['VG'] },
+                          { name: 'DOUBLE STACK CLASSIC BURGER', description: 'Double Stack of Beef Patties, fresh lettuce, tomato, bacon ketchup & gherkin', price: '£15', badges: [] },
+                        ].map((item, idx) => (
+                          <div key={idx} className="bg-white rounded-lg p-3.5 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow">
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-1 sm:gap-0">
+                              <div className="flex flex-wrap items-center gap-2 flex-1">
+                                <h4 className="text-base md:text-lg font-bold text-black uppercase leading-tight">{item.name}</h4>
+                                {item.badges.map((badge, i) => (
+                                  <span key={i} className="text-xs md:text-sm font-bold bg-[#f78e2c] text-black px-2 py-0.5 rounded">{badge}</span>
+                                ))}
+                              </div>
+                              <span className="text-lg md:text-xl font-black text-black whitespace-nowrap self-start sm:self-auto">{item.price}</span>
+                            </div>
+                            <p className="text-xs md:text-sm text-black/70 mb-1">{item.description}</p>
+                            {item.note && <p className="text-xs text-black/60 italic">{item.note}</p>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Desserts Section */}
+                    <div className="mb-6 md:mb-8">
+                      <div className="bg-black px-4 py-2 md:px-6 md:py-3 inline-block mb-3 md:mb-4">
+                        <h3 className="text-xl md:text-3xl font-heading font-bold uppercase text-white">Desserts</h3>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+                        {[
+                          { name: 'DOUBLE CHOCOLATE BROWNIE', description: 'Served with vanilla ice cream', price: '£7', badges: ['V'] },
+                          { name: 'STICKY TOFFEE PUDDING', description: 'Served with vanilla ice cream or custard', price: '£7', badges: ['V'] },
+                          { name: 'SPICED PEACH CRUMBLE', description: 'Served with ice cream or custard', price: '£7', badges: ['V'] },
+                        ].map((item, idx) => (
+                          <div key={idx} className="bg-white rounded-lg p-3.5 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow">
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-1 sm:gap-0">
+                              <div className="flex flex-wrap items-center gap-2 flex-1">
+                                <h4 className="text-base md:text-lg font-bold text-black uppercase leading-tight">{item.name}</h4>
+                                {item.badges.map((badge, i) => (
+                                  <span key={i} className="text-xs md:text-sm font-bold bg-[#f78e2c] text-black px-2 py-0.5 rounded">{badge}</span>
+                                ))}
+                              </div>
+                              <span className="text-lg md:text-xl font-black text-black whitespace-nowrap self-start sm:self-auto">{item.price}</span>
+                            </div>
+                            <p className="text-xs md:text-sm text-black/70">{item.description}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Kids Section */}
+                    <div className="mb-6 md:mb-8">
+                      <div className="bg-black px-4 py-2 md:px-6 md:py-3 inline-block mb-3 md:mb-4">
+                        <h3 className="text-xl md:text-3xl font-heading font-bold uppercase text-white">Kids</h3>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+                        {[
+                          { name: 'FISH FINGERS', description: 'Served with chips and beans', price: '£7', badges: [] },
+                          { name: 'CHICKEN TENDERS', description: 'Served with chips and beans', price: '£7', badges: [] },
+                          { name: 'MAC & CHEESE', description: 'Cheesy pasta topped with a golden crunchy onion layer', price: '£8', badges: ['V'] },
+                        ].map((item, idx) => (
+                          <div key={idx} className="bg-white rounded-lg p-3.5 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow">
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-1 sm:gap-0">
+                              <div className="flex flex-wrap items-center gap-2 flex-1">
+                                <h4 className="text-base md:text-lg font-bold text-black uppercase leading-tight">{item.name}</h4>
+                                {item.badges.map((badge, i) => (
+                                  <span key={i} className="text-xs md:text-sm font-bold bg-[#f78e2c] text-black px-2 py-0.5 rounded">{badge}</span>
+                                ))}
+                              </div>
+                              <span className="text-lg md:text-xl font-black text-black whitespace-nowrap self-start sm:self-auto">{item.price}</span>
+                            </div>
+                            <p className="text-xs md:text-sm text-black/70">{item.description}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Sides Section */}
+                    <div className="mb-6 md:mb-8">
+                      <div className="bg-black px-4 py-2 md:px-6 md:py-3 inline-block mb-3 md:mb-4">
+                        <h3 className="text-xl md:text-3xl font-heading font-bold uppercase text-white">Sides</h3>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+                        {[
+                          { name: 'HOMEMADE CHIPS', price: '£6', badges: ['GF'] },
+                          { name: 'SKINNY FRIES', price: '£6', badges: ['GF'] },
+                          { name: 'SWEET POTATO FRIES', price: '£7', badges: ['GF'] },
+                          { name: 'CHILLI FRIES', price: '£8', badges: [] },
+                          { name: 'ONION RINGS', price: '£6', badges: [] },
+                          { name: 'GARLIC PIZZA', price: '£7', badges: [], note: 'Add cheese for £2' },
+                        ].map((item, idx) => (
+                          <div key={idx} className="bg-white rounded-lg p-3.5 md:p-5 border-2 border-black/30 shadow-md hover:shadow-lg transition-shadow">
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-1 sm:gap-0">
+                              <div className="flex flex-wrap items-center gap-2 flex-1">
+                                <h4 className="text-base md:text-lg font-bold text-black uppercase leading-tight">{item.name}</h4>
+                                {item.badges.map((badge, i) => (
+                                  <span key={i} className="text-xs md:text-sm font-bold bg-[#f78e2c] text-black px-2 py-0.5 rounded">{badge}</span>
+                                ))}
+                              </div>
+                              <span className="text-lg md:text-xl font-black text-black whitespace-nowrap self-start sm:self-auto">{item.price}</span>
+                            </div>
+                            {item.note && <p className="text-xs text-black/60 italic">{item.note}</p>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Book Now Button */}
+                    <div className="mb-4">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleBooking();
+                        }}
+                        className="w-full px-6 md:px-8 py-3.5 md:py-5 bg-black text-white font-bold font-heading uppercase tracking-widest text-sm md:text-lg rounded-lg hover:bg-white hover:text-black active:scale-[0.98] transition-all duration-300 shadow-xl hover:shadow-2xl touch-manipulation"
+                      >
+                        BOOK NOW
+                      </button>
                     </div>
                   </div>
                 </div>
