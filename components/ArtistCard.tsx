@@ -73,7 +73,7 @@ const ArtistCard: React.FC<FeatureCardProps> = ({ artist, onClick }) => {
         <div className="relative z-10">
           <div className="overflow-hidden">
             <motion.h3 
-              className="font-heading text-3xl md:text-4xl font-bold uppercase text-white drop-shadow-lg"
+              className="font-heading text-2xl md:text-3xl font-bold text-white drop-shadow-lg leading-tight"
               variants={{
                 rest: { y: 0 },
                 hover: { y: -5, color: "#ffffff" }

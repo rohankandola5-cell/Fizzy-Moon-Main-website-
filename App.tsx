@@ -94,10 +94,10 @@ const FOOD_DRINK: FeatureItem[] = [
   },
   { 
     id: 'f2', 
-    name: 'Home Brews', 
+    name: 'King Sadhu Session IPA', 
     category: 'Craft Ales', 
     tag: 'DRINK', 
-    image: 'https://images.unsplash.com/photo-1584225064785-c62a8b43d148?q=80&w=1000&auto=format&fit=crop',
+    image: '/images/venue/IMG_7116.jpg',
     description: 'Taste our exclusive home brews. From hoppy IPAs to smooth Stouts, our rotation changes weekly. Brewed right here.'
   },
   { 
@@ -623,9 +623,9 @@ const App: React.FC = () => {
       >
         <div className="flex items-center justify-between px-6 md:px-8 max-w-[1920px] mx-auto w-full">
           {/* Logo - Left */}
-          <div className="pointer-events-auto z-50 flex-shrink-0">
+          <div className="pointer-events-auto z-50 flex-shrink-0 max-w-[200px] md:max-w-[240px]">
             <FizzyLogo 
-              className={`w-auto object-contain cursor-pointer transition-all duration-300 text-white ${scrolled ? 'h-10 md:h-12' : 'h-12 md:h-16'}`}
+              className={`w-auto max-w-full object-contain cursor-pointer transition-all duration-300 text-white ${scrolled ? 'h-10 md:h-12' : 'h-12 md:h-16'}`}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             />
           </div>
@@ -713,9 +713,10 @@ const App: React.FC = () => {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: isPageReady ? 1 : 0, y: isPageReady ? 0 : 8 }}
             transition={{ duration: 1.2, delay: 0.5, ease: "easeInOut" }}
-            className="absolute top-[96px] flex items-center gap-3 md:gap-4 text-[10px] md:text-sm font-bold tracking-[0.2em] uppercase mb-6 bg-black/60 px-6 py-2 rounded-full backdrop-blur-md border border-white/10 shadow-lg"
+            className="absolute top-20 md:top-24 flex items-center gap-2 md:gap-3 text-[10px] md:text-sm font-bold tracking-[0.2em] uppercase bg-black/60 px-4 md:px-6 py-1.5 md:py-2 rounded-full backdrop-blur-md border border-white/10 shadow-lg whitespace-nowrap"
           >
-            <span className="text-[#f78e2c]"><MapPin className="inline w-3 h-3 mr-1 mb-0.5" />Leamington Spa</span>
+            <MapPin className="w-3 h-3 md:w-3.5 md:h-3.5 shrink-0" />
+            <span className="text-[#f78e2c]">Leamington Spa</span>
           </motion.div>
 
           {/* Main Title Block */}
@@ -724,10 +725,11 @@ const App: React.FC = () => {
              <motion.img 
                src="/images/logo/fizzy_moon_white_final.png"
                alt="Fizzy Moon"
-               className="w-[65%] md:w-[45%] max-w-4xl h-auto object-contain drop-shadow-2xl mb-2"
+               className="w-[65%] md:w-[45%] max-w-4xl min-w-[280px] h-auto object-contain drop-shadow-2xl mb-2"
                initial={{ opacity: 0, scale: 0.98 }}
                animate={{ opacity: isPageReady ? 1 : 0, scale: isPageReady ? 1 : 0.98 }}
                transition={{ duration: 1.4, delay: 0.3, ease: "easeInOut" }}
+               style={{ display: isPageReady ? 'block' : 'none', visibility: isPageReady ? 'visible' : 'hidden' }}
              />
              {/* Descriptive Subtitle - Crucial for context */}
              <motion.h2 
@@ -1289,7 +1291,47 @@ const App: React.FC = () => {
                             ) : (
                               // Default View for other features (Food/Quiz)
                               <div className="pb-24">
-                                <button onClick={handleBooking} className="w-full py-6 rounded-2xl bg-[#f78e2c] text-black font-bold uppercase tracking-widest hover:bg-white transition-colors">Book Experience Now</button>
+                                <button onClick={handleBooking} className="w-full py-6 rounded-2xl bg-[#f78e2c] text-black font-bold uppercase tracking-widest hover:bg-white transition-colors">Book Now</button>
+                                
+                                {/* King Sadhu Story Section */}
+                                {selectedFeature.id === 'f2' && (
+                                  <div className="mt-8 md:mt-12">
+                                    <div className="max-w-3xl mx-auto space-y-4 md:space-y-6 text-gray-300 leading-relaxed">
+                                      <h3 className="text-xl md:text-3xl font-heading font-bold text-white mb-3 md:mb-2 uppercase tracking-tight">
+                                        The Story Behind Sadhu Singh & King Sadhu
+                                      </h3>
+                                      
+                                      <p className="text-sm md:text-lg leading-relaxed">
+                                        If you've spent time at Fizzy Moon Brewhouse, you may have noticed our Session IPA, Sadhu Singh.
+                                      </p>
+                                      
+                                      <p className="text-sm md:text-lg leading-relaxed">
+                                        What many guests don't know is that the name and artwork are a tribute to the owner's late father, who sadly passed away. Without him, Fizzy Moon would not exist.
+                                      </p>
+                                      
+                                      <p className="text-sm md:text-lg leading-relaxed">
+                                        The best way to honour his name and keep his legacy alive felt simple — by creating something lasting, shared, and enjoyed by others.
+                                        That's how Sadhu Singh IPA was born this year.
+                                      </p>
+                                      
+                                      <p className="text-sm md:text-lg leading-relaxed">
+                                        Building on that tribute, over the past year we've also introduced King Sadhu — a hazy, citrus-forward Session IPA, created as a direct evolution of the original and a further nod to his name.
+                                      </p>
+                                      
+                                      <p className="text-sm md:text-lg leading-relaxed">
+                                        King Sadhu is light, refreshing, and highly drinkable, with a soft haze and bright citrus character. It's often compared to beers like Neck Oil, offering that same easygoing session style while still delivering flavour.
+                                      </p>
+                                      
+                                      <p className="text-sm md:text-lg font-medium text-white leading-relaxed">
+                                        Both Sadhu Singh and King Sadhu Session IPA are exclusive to Fizzy Moon and available only here.
+                                      </p>
+                                      
+                                      <p className="text-sm md:text-lg leading-relaxed">
+                                        Next time you visit, try one — or both — and enjoy a beer that carries real meaning behind every pour.
+                                      </p>
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                             )}
                          </motion.div>
