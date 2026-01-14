@@ -23,11 +23,14 @@ const Footer: React.FC = () => {
         </div>
         
         <div className="flex gap-6 md:gap-8 flex-wrap">
-          <a href="#" className="text-gray-300 hover:text-white font-bold uppercase text-xs tracking-widest transition-colors cursor-pointer" data-hover="true">
+          <a href="https://www.instagram.com/fizzymoonleam/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white font-bold uppercase text-xs tracking-widest transition-colors cursor-pointer" data-hover="true">
             Instagram
           </a>
-          <a href="#" className="text-gray-300 hover:text-white font-bold uppercase text-xs tracking-widest transition-colors cursor-pointer" data-hover="true">
+          <a href="https://www.facebook.com/fizzymoonleam" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white font-bold uppercase text-xs tracking-widest transition-colors cursor-pointer" data-hover="true">
             Facebook
+          </a>
+          <a href="https://www.tiktok.com/@fizzymoonleamington?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white font-bold uppercase text-xs tracking-widest transition-colors cursor-pointer" data-hover="true">
+            TikTok
           </a>
         </div>
       </div>

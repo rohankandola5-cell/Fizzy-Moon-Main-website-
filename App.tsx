@@ -102,11 +102,11 @@ const FOOD_DRINK: FeatureItem[] = [
   },
   { 
     id: 'f3', 
-    name: 'Steak Night', 
-    category: 'Butchers Block', 
-    tag: 'GRILL', 
-    image: 'https://images.unsplash.com/photo-1600891964092-4316c288032e?q=80&w=1000&auto=format&fit=crop',
-    description: 'Locally sourced cuts, cooked over open flame. Served with all the trimmings. Perfect for date night.'
+    name: 'Gift Cards', 
+    category: 'Gift Cards', 
+    tag: 'GIFT CARDS', 
+    image: '/images/venue/Red White Illustrative Gift Card Instagram Post.png',
+    description: 'Give the gift of Fizzy Moon. Use in person for drinks and food, or gift to someone special for birthdays, anniversaries, or any occasion. The perfect way to share great food, craft beer, and live music.'
   }
 ];
 
@@ -1101,7 +1101,11 @@ const App: React.FC = () => {
 
                         {/* MUSIC Tag - Top Left */}
                         <div className="absolute top-4 left-4 md:top-6 md:left-6 z-20 flex items-center gap-2 text-[#f78e2c]">
-                          <Calendar className="w-5 h-5 md:w-6 md:h-6" />
+                          {selectedFeature.id === 'f3' ? (
+                            <Ticket className="w-5 h-5 md:w-6 md:h-6" />
+                          ) : (
+                            <Calendar className="w-5 h-5 md:w-6 md:h-6" />
+                          )}
                           <span className="font-mono text-sm md:text-base tracking-widest uppercase font-bold">{selectedFeature.tag}</span>
                         </div>
 
@@ -1308,7 +1312,16 @@ const App: React.FC = () => {
                             ) : (
                               // Default View for other features (Food/Quiz)
                               <div className="pb-24">
-                                <button onClick={handleBooking} className="w-full py-6 rounded-2xl bg-[#f78e2c] text-black font-bold uppercase tracking-widest hover:bg-white transition-colors">Book Now</button>
+                                {selectedFeature.id === 'f3' ? (
+                                  <button 
+                                    onClick={() => window.open('https://mylightspeed.app/giftcard/15e3ca92-70e9-438c-a662-693e047f5a3c/menu', '_blank')} 
+                                    className="w-full py-6 rounded-2xl bg-[#f78e2c] text-black font-bold uppercase tracking-widest hover:bg-white transition-colors"
+                                  >
+                                    Buy Now
+                                  </button>
+                                ) : (
+                                  <button onClick={handleBooking} className="w-full py-6 rounded-2xl bg-[#f78e2c] text-black font-bold uppercase tracking-widest hover:bg-white transition-colors">Book Now</button>
+                                )}
                                 
                                 {/* King Sadhu Story Section */}
                                 {selectedFeature.id === 'f2' && (
@@ -1345,6 +1358,33 @@ const App: React.FC = () => {
                                       
                                       <p className="text-sm md:text-lg leading-relaxed">
                                         Next time you visit, try one — or both — and enjoy a beer that carries real meaning behind every pour.
+                                      </p>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Gift Cards Section */}
+                                {selectedFeature.id === 'f3' && (
+                                  <div className="mt-8 md:mt-12">
+                                    <div className="max-w-3xl mx-auto space-y-4 md:space-y-6 text-gray-300 leading-relaxed">
+                                      <h3 className="text-xl md:text-3xl font-heading font-bold text-white mb-3 md:mb-2 uppercase tracking-tight">
+                                        Give the Gift of Fizzy Moon
+                                      </h3>
+                                      
+                                      <p className="text-sm md:text-lg leading-relaxed">
+                                        Fizzy Moon gift cards are the perfect way to share the experience of great food, craft beer, and live music with someone special. Whether you're treating yourself or giving a gift that truly matters, our gift cards unlock everything we have to offer.
+                                      </p>
+                                      
+                                      <p className="text-sm md:text-lg leading-relaxed">
+                                        <span className="font-medium text-white">Use them in person</span> for drinks, food, or any purchase at Fizzy Moon Brewhouse. They're accepted for everything on our menu — from our signature craft ales and cocktails to our full food menu featuring fire-grilled dishes, burgers, pizzas, and more.
+                                      </p>
+                                      
+                                      <p className="text-sm md:text-lg leading-relaxed">
+                                        <span className="font-medium text-white">Perfect for any occasion:</span> birthdays, anniversaries, thank yous, congratulations, or just because. A Fizzy Moon gift card is more than a present — it's an invitation to create memories, enjoy great food and drink, and experience the vibrant atmosphere that makes Fizzy Moon special.
+                                      </p>
+                                      
+                                      <p className="text-sm md:text-lg font-medium text-white leading-relaxed">
+                                        Give someone the gift of great times at Fizzy Moon. Buy yours today and let them choose their perfect night out.
                                       </p>
                                     </div>
                                   </div>
